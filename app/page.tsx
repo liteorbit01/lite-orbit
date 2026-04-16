@@ -1,11 +1,66 @@
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const handleSubmit = async () => {
+  if (!email) {
+    setError("Please enter an email.");
+    setSuccess("");
+    return;
+  }
+
+  // Format validation
+  if (!emailRegex.test(email)) {
+    setError("Please enter a valid email address.");
+    setSuccess("");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (res.status === 409) {
+      setError(data.message);
+      setSuccess("");
+      return;
+    }
+
+    if (!res.ok) {
+      setError(data.message || "Something went wrong.");
+      setSuccess("");
+      return;
+    }
+
+    setSuccess(data.message); // IMOPRTANT
+    setError("");
+    setEmail("");
+
+  } catch (err) {
+    console.error(err);
+    setError("Server error.");
+    setSuccess("");
+  }
+};
+
   return (
     <main className="min-h-screen bg-[#F5F1EB] text-[#2F2F2F]">
-
       {/* HERO SECTION */}
       <section className="grid md:grid-cols-2 items-center px-16 py-40 max-w-7xl mx-auto gap-20">
-
         <div>
           <h1 className="text-6xl md:text-7xl font-light tracking-[0.08em] leading-tight">
             Refined Essentials<br />for Modern Living
@@ -28,13 +83,11 @@ export default function Home() {
             className="rounded-2xl shadow-lg"
           />
         </div>
-
       </section>
 
       {/* COLLECTION SECTION */}
       <section className="py-40 px-10 bg-[#EFEAE3]">
         <div className="max-w-7xl mx-auto">
-
           <div className="text-center mb-24">
             <h2 className="text-5xl md:text-6xl font-light tracking-[0.15em] mb-4">
               The Collection
@@ -43,7 +96,6 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-16">
-
             <div className="group cursor-pointer">
               <div className="overflow-hidden rounded-2xl">
                 <img
@@ -79,39 +131,50 @@ export default function Home() {
                 Elevated textiles crafted for comfort and calm.
               </p>
             </div>
-
           </div>
-
         </div>
       </section>
 
       {/* EMAIL SECTION */}
-<section className="py-40 bg-[#F5F1EB] text-center px-6">
-  <div className="max-w-2xl mx-auto">
+      <section className="py-40 bg-[#F5F1EB] text-center px-6">
+        <div className="max-w-2xl mx-auto">
 
-    <h2 className="text-5xl font-light tracking-[0.08em] mb-6">
-      Launching Soon
-    </h2>
+          <h2 className="text-5xl font-light tracking-[0.08em] mb-6">
+            Launching Soon
+          </h2>
 
-    <p className="text-lg text-[#6B6B6B] mb-12 leading-relaxed">
-      Join the Lite Orbit community and be the first to experience
-      our refined essentials.
-    </p>
+          <p className="text-lg text-[#6B6B6B] mb-12 leading-relaxed">
+            Join the Lite Orbit community and be the first to experience
+            our refined essentials.
+          </p>
 
-    <div className="flex justify-center gap-4 flex-col md:flex-row">
-      <input
-        type="email"
-        placeholder="Enter your email"
-        className="px-6 py-3 border border-[#2F2F2F] bg-transparent text-sm tracking-wide focus:outline-none"
-      />
-      <button className="px-8 py-3 border border-[#2F2F2F] text-sm tracking-wide hover:bg-[#2F2F2F] hover:text-white transition-all duration-300">
-        Subscribe
-      </button>
-    </div>
+          <div className="flex justify-center gap-4 flex-col md:flex-row">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="px-6 py-3 border border-[#2F2F2F] bg-transparent text-sm tracking-wide focus:outline-none"
+            />
 
-  </div>
-</section>
+            <button
+              onClick={handleSubmit}
+              className="px-8 py-3 border border-[#2F2F2F] text-sm tracking-wide hover:bg-[#2F2F2F] hover:text-white transition-all duration-300"
+            >
+              Subscribe
+            </button>
+          </div>
 
+          {error && (
+            <p className="text-red-500 mt-4">{error}</p>
+          )}
+
+          {success && (
+            <p className="text-green-600 mt-4">{success}</p>
+          )}
+
+        </div>
+      </section>
     </main>
   );
 }
