@@ -70,42 +70,50 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-[#F5F1EB] text-[#2F2F2F] antialiased min-h-screen flex flex-col`}
       >
-        {/* HEADER */}
-        <header className="flex justify-between items-center px-10 py-8 max-w-7xl mx-auto w-full">
-          <Link
-            href="/"
-            className="text-lg tracking-[0.18em] font-light hover:opacity-80 transition duration-300"
-          >
-            LITE ORBIT
-          </Link>
+       {/* HEADER */}
+<header className="relative flex items-center px-10 py-8 max-w-7xl mx-auto w-full">
 
-          <nav className="space-x-10 text-sm text-[#6B6B6B]">
-            <Link href="/" className="hover:text-black transition duration-300">
-              Home
-            </Link>
+  {/* Logo - Far Left */}
+  <div className="absolute left-10">
+    <Link href="/">
+      <img
+        src="/logo.png"
+        alt="Lite Orbit Logo"
+        className="h-20 w-auto"
+      />
+    </Link>
+  </div>
 
-            <Link
-              href="/about"
-              className="hover:text-black transition duration-300"
-            >
-              About
-            </Link>
+  {/* Center Brand Name */}
+  <div className="mx-auto">
+    <Link
+      href="/"
+      className="text-5xl italic tracking-wide"
+      style={{
+        fontFamily: "'Playfair Display', serif"
+      }}
+    >
+      Lite Orbit
+    </Link>
+  </div>
 
-            <Link
-              href="/collection"
-              className="hover:text-black transition duration-300"
-            >
-              Collection
-            </Link>
+  {/* Navigation - Right */}
+  <nav className="absolute right-10 space-x-10 text-sm text-[#6B6B6B]">
+    <Link href="/" className="hover:text-black transition duration-300">
+      Home
+    </Link>
+    <Link href="/about" className="hover:text-black transition duration-300">
+      About
+    </Link>
+    <Link href="/collection" className="hover:text-black transition duration-300">
+      Collection
+    </Link>
+    <Link href="/contact" className="hover:text-black transition duration-300">
+      Contact
+    </Link>
+  </nav>
 
-            <Link
-              href="/contact"
-              className="hover:text-black transition duration-300"
-            >
-              Contact
-            </Link>
-          </nav>
-        </header>
+</header>
 
         {/* MAIN CONTENT */}
         <main className="flex-grow">
