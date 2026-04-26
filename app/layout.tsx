@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Lite Orbit creates elevated essentials in apparel and home textiles, thoughtfully designed for modern living.",
+    "Discover elevated essentials in apparel and home textiles, thoughtfully designed for modern living and timeless sophistication.",
 
   keywords: [
     "luxury essentials",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   ],
 
   alternates: {
-    canonical: "/",
+    canonical: "https://liteorbit.com",
   },
 
   robots: {
@@ -48,17 +48,17 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Lite Orbit — Refined Essentials",
+    title: "Lite Orbit — Refined Essentials for Modern Living",
     description:
-      "Elevated essentials thoughtfully designed for modern living.",
+      "Discover elevated essentials in apparel and home textiles, thoughtfully designed for modern living and timeless sophistication.",
     url: "https://liteorbit.com",
     siteName: "Lite Orbit",
     images: [
       {
-        url: "/hero.jpg", // Must be 1200x630 in /public
-        width: 1280,
+        url: "https://liteorbit.com/og-image.jpg", // 1200x630 recommended
+        width: 1200,
         height: 630,
-        alt: "Lite Orbit Lifestyle",
+        alt: "Lite Orbit — Refined Essentials for Modern Living",
       },
     ],
     locale: "en_CA",
@@ -67,10 +67,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Lite Orbit — Refined Essentials",
+    title: "Lite Orbit — Refined Essentials for Modern Living",
     description:
-      "Elevated essentials thoughtfully designed for modern living.",
-    images: ["/hero.jpg"],
+      "Discover elevated essentials in apparel and home textiles, thoughtfully designed for modern living and timeless sophistication.",
+    images: ["https://liteorbit.com/og-image.jpg"],
   },
 
   icons: {
