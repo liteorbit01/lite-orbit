@@ -25,11 +25,15 @@ export default function Header() {
             className="h-10 md:h-16 w-auto"
           />
           <span
-            className="text-xl md:text-6xl italic tracking-wide"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Lite Orbit
-          </span>
+  className="block text-base md:text-3xl italic text-center leading-tight"
+  style={{ fontFamily: "'Playfair Display', serif" }}
+>
+  Lite Orbit
+  <br />
+  <span className="text-sm md:text-xl not-italic tracking-wide">
+Essentials, Reconsidered.
+  </span>
+</span>
         </Link>
 
         {/* Desktop Nav */}
