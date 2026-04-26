@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
+/* =========================
+   Root Theme Variables
+========================= */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* Tailwind Theme Bridge */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,6 +16,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -19,8 +24,32 @@
   }
 }
 
+/* =========================
+   Global Body Styling
+========================= */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   Premium Mobile Menu Animation
+========================= */
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeSlide {
+  animation: fadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
