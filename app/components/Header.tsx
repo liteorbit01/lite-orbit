@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useCart } from "@/app/context/CartContext";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { cart } = useCart();
+
+  const itemCount = cart.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   // Prevent background scrolling when menu is open
   useEffect(() => {
@@ -12,7 +19,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="relative z-50">
+    <header className="relative z-50 border-b border-[#E5E0D8]">
 
       {/* Top Bar */}
       <div className="px-6 md:px-10 py-6 md:py-8 max-w-7xl mx-auto w-full flex items-center justify-between">
@@ -22,54 +29,63 @@ export default function Header() {
           <img
             src="/logo.png"
             alt="Lite Orbit Logo"
-            className="h-10 md:h-16 w-auto"
+            className="h-8 md:h-14 w-auto"
           />
-          <span
-  className="block text-base md:text-3xl italic text-center leading-tight"
-  style={{ fontFamily: "'Playfair Display', serif" }}
->
-  Lite Orbit
-  <br />
-  <span className="text-sm md:text-xl not-italic tracking-wide">
-Essentials, Reconsidered.
-  </span>
-</span>
+
+          <div className="leading-tight">
+            <span
+              className="block text-base md:text-3xl italic"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Lite Orbit
+            </span>
+
+            <span className="block text-xs md:text-lg tracking-wide text-[#6B6B6B]">
+              Essentials, Reconsidered.
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-10 text-sm text-[#6B6B6B]">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/collection">Collection</Link>
-          <Link href="/contact">Contact</Link>
+        <nav className="hidden md:flex space-x-10 text-sm text-[#6B6B6B] items-center">
+          <Link href="/" className="hover:text-black transition">Home</Link>
+          <Link href="/about" className="hover:text-black transition">About</Link>
+          <Link href="/collection" className="hover:text-black transition">Collection</Link>
+          <Link href="/shop" className="hover:text-black transition">Shop</Link>
+          <Link href="/contact" className="hover:text-black transition">Contact</Link>
+
+          <Link href="/cart" className="hover:text-black transition">
+            Cart
+            {itemCount > 0 && (
+              <span className="ml-1 font-medium">
+                ({itemCount})
+              </span>
+            )}
+          </Link>
         </nav>
 
         {/* Mobile Hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-3xl transition-transform duration-300"
+          className="md:hidden text-3xl z-50"
         >
           {open ? "✕" : "☰"}
         </button>
       </div>
 
-      {/* Mobile Overlay (Below Header Only) */}
+      {/* Mobile Fullscreen Overlay */}
       {open && (
-        <div className="md:hidden absolute top-full left-0 w-full h-[calc(100vh-100%)]">
+        <div className="fixed inset-0 bg-[#F5F1EB]/95 backdrop-blur-md flex flex-col items-center justify-center space-y-10 text-2xl text-[#2F2F2F] tracking-wide md:hidden">
 
-          {/* Background */}
-          <div
-            className="absolute inset-0 bg-[#F5F1EB]/95 backdrop-blur-md"
-            onClick={() => setOpen(false)}
-          />
+          <Link href="/" onClick={() => setOpen(false)}>Home</Link>
+          <Link href="/about" onClick={() => setOpen(false)}>About</Link>
+          <Link href="/collection" onClick={() => setOpen(false)}>Collection</Link>
+          <Link href="/shop" onClick={() => setOpen(false)}>Shop</Link>
+          <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
 
-          {/* Menu Content */}
-          <div className="relative flex flex-col items-center justify-center h-full space-y-10 text-2xl text-[#2F2F2F] tracking-wide animate-fadeSlide">
-            <Link href="/" onClick={() => setOpen(false)}>Home</Link>
-            <Link href="/about" onClick={() => setOpen(false)}>About</Link>
-            <Link href="/collection" onClick={() => setOpen(false)}>Collection</Link>
-            <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
-          </div>
+          <Link href="/cart" onClick={() => setOpen(false)}>
+            Cart {itemCount > 0 && `(${itemCount})`}
+          </Link>
 
         </div>
       )}
