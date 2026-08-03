@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import nodemailer from "nodemailer";
 import validator from "validator";
 import crypto from "crypto";
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     const token = crypto.randomBytes(32).toString("hex");
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("pending_subscribers")
       .insert([{ email, token }]);
 
