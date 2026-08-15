@@ -9,8 +9,8 @@ import { CartProvider } from "@/app/context/CartContext";
 import "./globals.css";
 
 const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
+ subsets: ["latin"],
+weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
