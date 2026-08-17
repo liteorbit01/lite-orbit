@@ -1,13 +1,15 @@
 export default function Header() {
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-white px-6">
-      <h1 className="text-xl font-semibold">
-        Lite Orbit Admin
+    <header className="flex items-center justify-between border-b bg-white px-8 py-6">
+
+      <h1 className="text-2xl font-semibold">
+        Admin Dashboard
       </h1>
 
-      <div className="text-sm text-gray-600">
-        Administrator
+      <div className="text-sm text-gray-500">
+        Lite Orbit Administration
       </div>
+
     </header>
   );
 }
