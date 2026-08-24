@@ -23,3 +23,13 @@ export type ProductFormData = {
 
   status: ProductStatus;
 };
+export type ProductListItem = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  collection: string;
+  status: ProductStatus;
+  featured: boolean;
+  createdAt: string;
+};
