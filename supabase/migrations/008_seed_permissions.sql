@@ -1,0 +1,17 @@
+-- =============================================================================
+-- Lite Orbit Platform
+-- Migration: 008
+-- File: 008_permissions.sql
+--
+-- Reserved for future permission seeding.
+--
+-- Current architecture relies on:
+--
+-- • Supabase Authentication
+-- • Row Level Security
+-- • Service Role
+-- • Next.js middleware
+--
+-- Fine-grained permission assignments will be introduced
+-- when multiple administrative roles require different UI capabilities.
+-- =============================================================================
