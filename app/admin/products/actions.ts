@@ -91,3 +91,27 @@ export async function getCollections(): Promise<CollectionOption[]> {
 
   return data ?? [];
 }
+
+// ========================================
+// Create Product
+// ========================================
+
+export async function createProduct(
+  formData: FormData
+): Promise<void> {
+  console.log("========== CREATE PRODUCT ==========");
+
+  const product = {
+    name: formData.get("name"),
+    productCode: formData.get("productCode"),
+    slug: formData.get("slug"),
+    categoryId: formData.get("categoryId"),
+    collectionId: formData.get("collectionId"),
+    status: formData.get("status"),
+    description: formData.get("description"),
+  };
+
+  console.table(product);
+
+  console.log("====================================");
+}

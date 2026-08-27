@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { createProduct } from "@/app/admin/products/actions";
+
 import type {
   ProductFormData,
   CategoryOption,
@@ -49,7 +51,10 @@ export default function ProductForm({
   }
 
   return (
-    <form className="space-y-8">
+    <form
+      action={createProduct}
+      className="space-y-8"
+    >
       {/* Product Information */}
 
       <div>
