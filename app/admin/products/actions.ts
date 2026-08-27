@@ -1,7 +1,16 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { ProductListItem } from "./types";
+
+import type {
+  ProductListItem,
+  CategoryOption,
+  CollectionOption,
+} from "./types";
+
+// ========================================
+// Products
+// ========================================
 
 export async function getProducts(): Promise<ProductListItem[]> {
   const supabase = await createClient();
@@ -36,9 +45,49 @@ export async function getProducts(): Promise<ProductListItem[]> {
     status: product.status,
     featured: product.featured,
     createdAt: product.created_at,
-    category:
-      product.categories?.name ?? "-",
-    collection:
-      product.collections?.name ?? "-",
+    category: product.categories?.name ?? "-",
+    collection: product.collections?.name ?? "-",
   }));
+}
+
+// ========================================
+// Categories
+// ========================================
+
+export async function getCategories(): Promise<CategoryOption[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name")
+    .eq("is_active", true)
+    .order("display_order");
+
+  if (error) {
+    console.error("Error loading categories:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// ========================================
+// Collections
+// ========================================
+
+export async function getCollections(): Promise<CollectionOption[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("collections")
+    .select("id, name")
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    console.error("Error loading collections:", error.message);
+    return [];
+  }
+
+  return data ?? [];
 }

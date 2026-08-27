@@ -10,19 +10,20 @@ export type ProductFormData = {
   id?: string;
 
   name: string;
-
+  productCode: string;
   slug: string;
 
   description: string;
 
-  category: string;
+  categoryId: string;
+  collectionId: string;
 
   images: string[];
-
   sizes: ProductSize[];
 
   status: ProductStatus;
 };
+
 export type ProductListItem = {
   id: string;
   name: string;
@@ -32,4 +33,13 @@ export type ProductListItem = {
   status: ProductStatus;
   featured: boolean;
   createdAt: string;
+};
+export type CategoryOption = {
+  id: string;
+  name: string;
+};
+
+export type CollectionOption = {
+  id: string;
+  name: string;
 };
