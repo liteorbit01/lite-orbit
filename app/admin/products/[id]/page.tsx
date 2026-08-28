@@ -1,8 +1,12 @@
+import { notFound } from "next/navigation";
+
 import ProductForm from "@/components/admin/products/ProductForm";
 
 import {
   getCategories,
   getCollections,
+  getProductById,
+  updateProduct,
 } from "../actions";
 
 type EditProductPageProps = {
@@ -16,6 +20,12 @@ export default async function EditProductPage({
 }: EditProductPageProps) {
   const { id } = await params;
 
+  const product = await getProductById(id);
+
+  if (!product) {
+    notFound();
+  }
+
   const categories = await getCategories();
   const collections = await getCollections();
 
@@ -27,14 +37,16 @@ export default async function EditProductPage({
         </h1>
 
         <p className="mt-2 text-gray-500">
-          Editing product {id}
+          Editing {product.name}
         </p>
       </div>
 
       <div className="rounded-2xl bg-white p-10 shadow-sm">
         <ProductForm
+          initialData={product}
           categories={categories}
           collections={collections}
+          action={updateProduct}
         />
       </div>
     </div>

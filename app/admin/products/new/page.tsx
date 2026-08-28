@@ -3,6 +3,7 @@ import ProductForm from "@/components/admin/products/ProductForm";
 import {
   getCategories,
   getCollections,
+  createProduct,
 } from "../actions";
 
 export default async function NewProductPage() {
@@ -25,6 +26,7 @@ export default async function NewProductPage() {
         <ProductForm
           categories={categories}
           collections={collections}
+          action={createProduct}
         />
       </div>
     </div>

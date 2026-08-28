@@ -221,3 +221,114 @@ export async function createProduct(
 
   redirect("/admin/products");
 }
+// ========================================
+// Update Product
+// ========================================
+
+export async function updateProduct(
+  formData: FormData
+): Promise<void> {
+  const id = (formData.get("id") ?? "")
+    .toString()
+    .trim();
+
+  const product = {
+    name: (formData.get("name") ?? "")
+      .toString()
+      .trim(),
+
+    productCode: (formData.get("productCode") ?? "")
+      .toString()
+      .trim(),
+
+    slug: (formData.get("slug") ?? "")
+      .toString()
+      .trim(),
+
+    categoryId: (formData.get("categoryId") ?? "")
+      .toString()
+      .trim(),
+
+    collectionId: (formData.get("collectionId") ?? "")
+      .toString()
+      .trim(),
+
+    status: (formData.get("status") ?? "draft")
+      .toString()
+      .trim(),
+
+    description: (formData.get("description") ?? "")
+      .toString()
+      .trim(),
+  };
+
+  // ----------------------------
+  // Validation
+  // ----------------------------
+
+  const errors: string[] = [];
+
+  if (!id) {
+    errors.push("Product id is missing.");
+  }
+
+  if (!product.name) {
+    errors.push("Product Name is required.");
+  }
+
+  if (!product.productCode) {
+    errors.push("Product Code is required.");
+  }
+
+  if (!product.categoryId) {
+    errors.push("Category is required.");
+  }
+
+  if (!product.collectionId) {
+    errors.push("Collection is required.");
+  }
+
+  if (errors.length > 0) {
+    console.error("Validation failed:");
+
+    errors.forEach((error) =>
+      console.error(`• ${error}`)
+    );
+
+    return;
+  }
+
+  // ----------------------------
+  // Update Product
+  // ----------------------------
+
+  const supabase = supabaseAdmin;
+
+  const { data, error } = await supabase
+    .from("products")
+    .update({
+      name: product.name,
+      product_code: product.productCode,
+      slug: product.slug,
+      category_id: product.categoryId,
+      collection_id: product.collectionId,
+      description: product.description,
+      status: product.status,
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to update product:");
+    console.error(error);
+    return;
+  }
+
+  console.log("====================================");
+  console.log("Product updated successfully");
+  console.table(data);
+  console.log("====================================");
+
+  redirect("/admin/products");
+}

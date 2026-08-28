@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { createProduct } from "@/app/admin/products/actions";
-
 import type {
   ProductFormData,
   CategoryOption,
@@ -13,6 +11,20 @@ import type {
 type ProductFormProps = {
   categories: CategoryOption[];
   collections: CollectionOption[];
+  initialData?: ProductFormData;
+  action: (formData: FormData) => void | Promise<void>;
+};
+
+const EMPTY_PRODUCT: ProductFormData = {
+  name: "",
+  productCode: "",
+  slug: "",
+  description: "",
+  categoryId: "",
+  collectionId: "",
+  images: [],
+  sizes: [],
+  status: "draft",
 };
 
 function slugify(text: string) {
@@ -27,38 +39,45 @@ function slugify(text: string) {
 export default function ProductForm({
   categories,
   collections,
+  initialData,
+  action,
 }: ProductFormProps) {
-  const [product, setProduct] = useState<ProductFormData>({
-    name: "",
-    productCode: "",
-    slug: "",
-    description: "",
-    categoryId: "",
-    collectionId: "",
-    images: [],
-    sizes: [],
-    status: "draft",
-  });
+  const [product, setProduct] =
+    useState<ProductFormData>(
+      initialData ?? EMPTY_PRODUCT
+    );
+
+  const submitLabel = initialData
+    ? "💾 Save Changes"
+    : "💾 Save Product";
 
   function update<K extends keyof ProductFormData>(
     key: K,
     value: ProductFormData[K]
   ) {
-    setProduct((prev) => ({
-      ...prev,
+    setProduct((previous) => ({
+      ...previous,
       [key]: value,
     }));
   }
 
   return (
     <form
-      action={createProduct}
+      action={action}
       className="space-y-8"
     >
+      {product.id && (
+        <input
+          type="hidden"
+          name="id"
+          value={product.id}
+        />
+      )}
+
       {/* Product Information */}
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Product Name
         </label>
 
@@ -76,7 +95,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Product Code
         </label>
 
@@ -86,13 +105,16 @@ export default function ProductForm({
           placeholder="LO-BED-001"
           value={product.productCode}
           onChange={(e) =>
-            update("productCode", e.target.value)
+            update(
+              "productCode",
+              e.target.value
+            )
           }
         />
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Slug
         </label>
 
@@ -101,7 +123,10 @@ export default function ProductForm({
           className="w-full rounded-lg border p-3"
           value={product.slug}
           onChange={(e) =>
-            update("slug", e.target.value)
+            update(
+              "slug",
+              e.target.value
+            )
           }
         />
       </div>
@@ -111,9 +136,8 @@ export default function ProductForm({
       <h2 className="text-xl font-semibold">
         Catalog
       </h2>
-
-      <div>
-        <label className="block mb-2 font-medium">
+            <div>
+        <label className="mb-2 block font-medium">
           Category
         </label>
 
@@ -122,7 +146,10 @@ export default function ProductForm({
           className="w-full rounded-lg border p-3"
           value={product.categoryId}
           onChange={(e) =>
-            update("categoryId", e.target.value)
+            update(
+              "categoryId",
+              e.target.value
+            )
           }
         >
           <option value="">
@@ -141,7 +168,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Collection
         </label>
 
@@ -150,7 +177,10 @@ export default function ProductForm({
           className="w-full rounded-lg border p-3"
           value={product.collectionId}
           onChange={(e) =>
-            update("collectionId", e.target.value)
+            update(
+              "collectionId",
+              e.target.value
+            )
           }
         >
           <option value="">
@@ -169,7 +199,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Status
         </label>
 
@@ -180,7 +210,9 @@ export default function ProductForm({
           onChange={(e) =>
             update(
               "status",
-              e.target.value as "draft" | "published"
+              e.target.value as
+                | "draft"
+                | "published"
             )
           }
         >
@@ -195,7 +227,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
+        <label className="mb-2 block font-medium">
           Description
         </label>
 
@@ -205,17 +237,19 @@ export default function ProductForm({
           className="w-full rounded-lg border p-3"
           value={product.description}
           onChange={(e) =>
-            update("description", e.target.value)
+            update(
+              "description",
+              e.target.value
+            )
           }
         />
       </div>
-
-      <div className="flex justify-end pt-6">
+            <div className="flex justify-end pt-6">
         <button
           type="submit"
-          className="rounded-lg bg-black px-8 py-3 text-white hover:bg-gray-800 transition"
+          className="rounded-lg bg-black px-8 py-3 text-white transition hover:bg-gray-800"
         >
-          💾 Save Product
+          {submitLabel}
         </button>
       </div>
     </form>
