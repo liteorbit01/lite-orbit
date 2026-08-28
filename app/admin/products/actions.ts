@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import type {
   ProductListItem,
@@ -99,16 +100,29 @@ export async function getCollections(): Promise<CollectionOption[]> {
 export async function createProduct(
   formData: FormData
 ): Promise<void> {
-
   const product = {
     name: (formData.get("name") ?? "").toString().trim(),
-    productCode: (formData.get("productCode") ?? "").toString().trim(),
+    productCode: (formData.get("productCode") ?? "")
+      .toString()
+      .trim(),
     slug: (formData.get("slug") ?? "").toString().trim(),
-    categoryId: (formData.get("categoryId") ?? "").toString().trim(),
-    collectionId: (formData.get("collectionId") ?? "").toString().trim(),
-    status: (formData.get("status") ?? "draft").toString(),
-    description: (formData.get("description") ?? "").toString().trim(),
+    categoryId: (formData.get("categoryId") ?? "")
+      .toString()
+      .trim(),
+    collectionId: (formData.get("collectionId") ?? "")
+      .toString()
+      .trim(),
+    status: (formData.get("status") ?? "draft")
+      .toString()
+      .trim(),
+    description: (formData.get("description") ?? "")
+      .toString()
+      .trim(),
   };
+
+  // ========================================
+  // Validation
+  // ========================================
 
   const errors: string[] = [];
 
@@ -138,7 +152,49 @@ export async function createProduct(
     return;
   }
 
-  console.log("========== CREATE PRODUCT ==========");
-  console.table(product);
+  // ========================================
+  // Create Product
+  // ========================================
+
+  const supabase = supabaseAdmin;
+
+  // Find Lite Orbit brand
+  const { data: brand, error: brandError } = await supabase
+    .from("brands")
+    .select("id")
+    .eq("slug", "lite-orbit")
+    .single();
+
+  if (brandError || !brand) {
+    console.error("Unable to locate Lite Orbit brand.");
+    console.error(brandError);
+    return;
+  }
+
+  // Insert product
+  const { data, error } = await supabase
+    .from("products")
+    .insert({
+      brand_id: brand.id,
+      name: product.name,
+      product_code: product.productCode,
+      slug: product.slug,
+      category_id: product.categoryId,
+      collection_id: product.collectionId,
+      description: product.description,
+      status: product.status,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to create product:");
+    console.error(error);
+    return;
+  }
+
+  console.log("====================================");
+  console.log("Product created successfully");
+  console.table(data);
   console.log("====================================");
 }
