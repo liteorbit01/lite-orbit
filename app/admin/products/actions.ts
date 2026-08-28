@@ -99,19 +99,46 @@ export async function getCollections(): Promise<CollectionOption[]> {
 export async function createProduct(
   formData: FormData
 ): Promise<void> {
-  console.log("========== CREATE PRODUCT ==========");
 
   const product = {
-    name: formData.get("name"),
-    productCode: formData.get("productCode"),
-    slug: formData.get("slug"),
-    categoryId: formData.get("categoryId"),
-    collectionId: formData.get("collectionId"),
-    status: formData.get("status"),
-    description: formData.get("description"),
+    name: (formData.get("name") ?? "").toString().trim(),
+    productCode: (formData.get("productCode") ?? "").toString().trim(),
+    slug: (formData.get("slug") ?? "").toString().trim(),
+    categoryId: (formData.get("categoryId") ?? "").toString().trim(),
+    collectionId: (formData.get("collectionId") ?? "").toString().trim(),
+    status: (formData.get("status") ?? "draft").toString(),
+    description: (formData.get("description") ?? "").toString().trim(),
   };
 
-  console.table(product);
+  const errors: string[] = [];
 
+  if (!product.name) {
+    errors.push("Product Name is required.");
+  }
+
+  if (!product.productCode) {
+    errors.push("Product Code is required.");
+  }
+
+  if (!product.categoryId) {
+    errors.push("Category is required.");
+  }
+
+  if (!product.collectionId) {
+    errors.push("Collection is required.");
+  }
+
+  if (errors.length > 0) {
+    console.error("Validation failed:");
+
+    errors.forEach((error) => {
+      console.error(`• ${error}`);
+    });
+
+    return;
+  }
+
+  console.log("========== CREATE PRODUCT ==========");
+  console.table(product);
   console.log("====================================");
 }
