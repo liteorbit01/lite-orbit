@@ -8,25 +8,21 @@ export type ProductSize = {
 
 export type ProductFormData = {
   id?: string;
-
   name: string;
   productCode: string;
   slug: string;
-
   description: string;
-
   categoryId: string;
   collectionId: string;
-
   images: string[];
   sizes: ProductSize[];
-
   status: ProductStatus;
 };
 
 export type ProductListItem = {
   id: string;
   name: string;
+  productCode: string;
   slug: string;
   category: string;
   collection: string;
@@ -34,6 +30,7 @@ export type ProductListItem = {
   featured: boolean;
   createdAt: string;
 };
+
 export type CategoryOption = {
   id: string;
   name: string;

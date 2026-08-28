@@ -22,6 +22,7 @@ export async function getProducts(): Promise<ProductListItem[]> {
     .select(`
       id,
       name,
+      product_code,
       slug,
       status,
       featured,
@@ -43,6 +44,7 @@ export async function getProducts(): Promise<ProductListItem[]> {
   return (data ?? []).map((product: any) => ({
     id: product.id,
     name: product.name,
+    productCode: product.product_code,
     slug: product.slug,
     status: product.status,
     featured: product.featured,
@@ -160,6 +162,7 @@ export async function createProduct(
   const supabase = supabaseAdmin;
 
   // Find Lite Orbit brand
+
   const { data: brand, error: brandError } = await supabase
     .from("brands")
     .select("id")
@@ -173,6 +176,7 @@ export async function createProduct(
   }
 
   // Insert product
+
   const { data, error } = await supabase
     .from("products")
     .insert({
@@ -188,9 +192,6 @@ export async function createProduct(
     .select()
     .single();
 
-    console.log("Products returned:", data);
-    console.log("Products error:", error);
-
   if (error) {
     console.error("Failed to create product:");
     console.error(error);
@@ -201,5 +202,6 @@ export async function createProduct(
   console.log("Product created successfully");
   console.table(data);
   console.log("====================================");
+
   redirect("/admin/products");
 }
