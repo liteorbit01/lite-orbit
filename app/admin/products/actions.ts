@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import type {
+  ProductFormData,
   ProductListItem,
   CategoryOption,
   CollectionOption,
@@ -52,6 +53,49 @@ export async function getProducts(): Promise<ProductListItem[]> {
     category: product.categories?.name ?? "-",
     collection: product.collections?.name ?? "-",
   }));
+}
+
+// ========================================
+// Get Product By Id
+// ========================================
+
+export async function getProductById(
+  id: string
+): Promise<ProductFormData | null> {
+  const supabase = supabaseAdmin;
+
+  const { data, error } = await supabase
+    .from("products")
+    .select(`
+      id,
+      name,
+      product_code,
+      slug,
+      description,
+      category_id,
+      collection_id,
+      status
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error loading product:", error.message);
+    return null;
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    productCode: data.product_code,
+    slug: data.slug,
+    description: data.description ?? "",
+    categoryId: data.category_id,
+    collectionId: data.collection_id,
+    status: data.status,
+    images: [],
+    sizes: [],
+  };
 }
 
 // ========================================
@@ -123,45 +167,20 @@ export async function createProduct(
       .trim(),
   };
 
-  // ========================================
-  // Validation
-  // ========================================
-
   const errors: string[] = [];
 
-  if (!product.name) {
-    errors.push("Product Name is required.");
-  }
-
-  if (!product.productCode) {
-    errors.push("Product Code is required.");
-  }
-
-  if (!product.categoryId) {
-    errors.push("Category is required.");
-  }
-
-  if (!product.collectionId) {
-    errors.push("Collection is required.");
-  }
+  if (!product.name) errors.push("Product Name is required.");
+  if (!product.productCode) errors.push("Product Code is required.");
+  if (!product.categoryId) errors.push("Category is required.");
+  if (!product.collectionId) errors.push("Collection is required.");
 
   if (errors.length > 0) {
     console.error("Validation failed:");
-
-    errors.forEach((error) => {
-      console.error(`• ${error}`);
-    });
-
+    errors.forEach((e) => console.error(`• ${e}`));
     return;
   }
 
-  // ========================================
-  // Create Product
-  // ========================================
-
   const supabase = supabaseAdmin;
-
-  // Find Lite Orbit brand
 
   const { data: brand, error: brandError } = await supabase
     .from("brands")
@@ -171,11 +190,8 @@ export async function createProduct(
 
   if (brandError || !brand) {
     console.error("Unable to locate Lite Orbit brand.");
-    console.error(brandError);
     return;
   }
-
-  // Insert product
 
   const { data, error } = await supabase
     .from("products")
