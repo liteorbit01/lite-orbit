@@ -15,7 +15,7 @@ import type {
 // ========================================
 
 export async function getProducts(): Promise<ProductListItem[]> {
-  const supabase = await createClient();
+  const supabase = supabaseAdmin;
 
   const { data, error } = await supabase
     .from("products")
@@ -187,6 +187,9 @@ export async function createProduct(
     })
     .select()
     .single();
+
+    console.log("Products returned:", data);
+    console.log("Products error:", error);
 
   if (error) {
     console.error("Failed to create product:");
