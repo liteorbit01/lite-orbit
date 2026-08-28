@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -197,4 +198,5 @@ export async function createProduct(
   console.log("Product created successfully");
   console.table(data);
   console.log("====================================");
+  redirect("/admin/products");
 }
