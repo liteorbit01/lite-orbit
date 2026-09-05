@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
-import ProductForm from "@/components/admin/products/ProductForm";
-import ProductImages from "@/components/admin/products/ProductImages";
+import ProductEditor from "@/components/admin/products/ProductEditor";
 
 import {
   getCategories,
@@ -42,15 +41,11 @@ export default async function EditProductPage({
         </p>
       </div>
 
-      <ProductForm
-        initialData={product}
+      <ProductEditor
+        product={product}
         categories={categories}
         collections={collections}
         action={updateProduct}
-      />
-
-      <ProductImages
-        productId={product.id!}
       />
     </div>
   );
