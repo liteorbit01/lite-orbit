@@ -6,6 +6,7 @@ import {
   getCategories,
   getCollections,
   getProductById,
+  getProductImages,
   updateProduct,
 } from "../actions";
 
@@ -28,6 +29,7 @@ export default async function EditProductPage({
 
   const categories = await getCategories();
   const collections = await getCollections();
+  const images = await getProductImages(id);
 
   return (
     <div className="space-y-8">
@@ -45,6 +47,7 @@ export default async function EditProductPage({
         product={product}
         categories={categories}
         collections={collections}
+        images={images}
         action={updateProduct}
       />
     </div>

@@ -40,3 +40,12 @@ export type CollectionOption = {
   id: string;
   name: string;
 };
+export type ProductImage = {
+  id: string;
+  product_id: string;
+  image_url: string;
+  alt_text: string | null;
+  image_type: string;
+  display_order: number;
+  created_at: string;
+};

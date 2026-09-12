@@ -332,3 +332,29 @@ export async function updateProduct(
 
   redirect("/admin/products");
 }
+// ========================================
+// Product Images
+// ========================================
+
+export async function getProductImages(
+  productId: string
+) {
+  const { data, error } = await supabaseAdmin
+    .from("product_images")
+    .select("*")
+    .eq("product_id", productId)
+    .order("display_order", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(
+      "Error loading product images:",
+      error.message
+    );
+
+    return [];
+  }
+
+  return data ?? [];
+}

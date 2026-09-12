@@ -10,12 +10,14 @@ import type {
   ProductFormData,
   CategoryOption,
   CollectionOption,
+  ProductImage,
 } from "@/app/admin/products/types";
 
 type ProductEditorProps = {
   product: ProductFormData;
   categories: CategoryOption[];
   collections: CollectionOption[];
+  images: ProductImage[];
   action: (formData: FormData) => void | Promise<void>;
 };
 
@@ -23,6 +25,7 @@ export default function ProductEditor({
   product,
   categories,
   collections,
+  images,
   action,
 }: ProductEditorProps) {
   const [activeTab, setActiveTab] =
@@ -69,6 +72,7 @@ export default function ProductEditor({
       {activeTab === "images" && (
         <ProductImages
           productId={product.id!}
+          images={images}
         />
       )}
 
