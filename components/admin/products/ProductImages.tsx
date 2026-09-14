@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  useRef,
+  useState,
+} from "react";
 
 import type {
   ProductImage,
@@ -15,57 +20,123 @@ export default function ProductImages({
   productId,
   images,
 }: ProductImagesProps) {
+  const router = useRouter();
+
   const fileInputRef =
     useRef<HTMLInputElement>(null);
 
   const [uploading, setUploading] =
     useState(false);
 
+  const [deletingId, setDeletingId] =
+    useState<string | null>(null);
+
   async function handleFileSelected(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    const file = event.target.files?.[0];
+    const file =
+      event.target.files?.[0];
 
     if (!file) return;
 
     try {
       setUploading(true);
 
-      const formData = new FormData();
+      const formData =
+        new FormData();
 
-      formData.append("productId", productId);
-      formData.append("file", file);
-
-      const response = await fetch(
-        "/api/admin/products/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
+      formData.append(
+        "productId",
+        productId
       );
 
+      formData.append(
+        "file",
+        file
+      );
+
+      const response =
+        await fetch(
+          "/api/admin/products/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
       if (!response.ok) {
+        const result =
+          await response.json();
+
         throw new Error(
-          "Upload failed."
+          result.error ??
+            "Upload failed."
         );
       }
 
-      alert("Image uploaded successfully.");
-
-      // Reload page to refresh gallery
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error(error);
 
       alert(
-        "Unable to upload image."
+        error instanceof Error
+          ? error.message
+          : "Upload failed."
       );
     } finally {
       setUploading(false);
 
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value =
+          "";
       }
+    }
+  }
+
+  async function deleteImage(
+    image: ProductImage
+  ) {
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to permanently delete this image?"
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(image.id);
+
+      const response =
+        await fetch(
+          `/api/admin/products/images/${image.id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+      if (!response.ok) {
+        const result =
+          await response.json();
+
+        throw new Error(
+          result.error ??
+            "Delete failed."
+        );
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Delete failed."
+      );
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -76,7 +147,9 @@ export default function ProductImages({
         type="file"
         accept="image/png,image/jpeg,image/webp"
         className="hidden"
-        onChange={handleFileSelected}
+        onChange={
+          handleFileSelected
+        }
       />
 
       <div className="mb-8 flex items-center justify-between">
@@ -86,7 +159,8 @@ export default function ProductImages({
           </h2>
 
           <p className="mt-2 text-gray-500">
-            Upload and manage images for this product.
+            Upload and manage images
+            for this product.
           </p>
         </div>
 
@@ -124,15 +198,35 @@ export default function ProductImages({
           {images.map((image) => (
             <div
               key={image.id}
-              className="overflow-hidden rounded-xl border bg-white shadow-sm"
+              className="group relative overflow-hidden rounded-xl border bg-white shadow-sm"
             >
-              <img
+              <Image
                 src={image.image_url}
                 alt={
                   image.alt_text ?? ""
                 }
+                width={500}
+                height={500}
                 className="aspect-square w-full object-cover"
               />
+
+              <button
+                type="button"
+                onClick={() =>
+                  deleteImage(image)
+                }
+                disabled={
+                  deletingId ===
+                  image.id
+                }
+                title="Delete image"
+                className="absolute right-2 top-2 rounded-full bg-white/90 p-2 shadow transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {deletingId ===
+                image.id
+                  ? "Deleting..."
+                  : "🗑️"}
+              </button>
             </div>
           ))}
         </div>
