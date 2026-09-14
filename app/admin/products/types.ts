@@ -1,4 +1,6 @@
-export type ProductStatus = "draft" | "published";
+export type ProductStatus =
+  | "draft"
+  | "published";
 
 export type ProductSize = {
   size: string;
@@ -40,6 +42,7 @@ export type CollectionOption = {
   id: string;
   name: string;
 };
+
 export type ProductImage = {
   id: string;
   product_id: string;
@@ -48,4 +51,48 @@ export type ProductImage = {
   image_type: string;
   display_order: number;
   created_at: string;
+};
+
+export type ProductVariant = {
+  id: string;
+  product_id: string;
+
+  sku: string;
+
+  size: string | null;
+  color: string | null;
+  material: string | null;
+
+  barcode: string | null;
+
+  weight: number | null;
+
+  price: number;
+
+  compare_at_price: number | null;
+  cost_price: number | null;
+
+  active: boolean;
+
+  created_at: string;
+  updated_at: string;
+};
+
+export type VariantFormData = {
+  sku: string;
+
+  size: string;
+  color: string;
+  material: string;
+
+  barcode: string;
+
+  weight: number | null;
+
+  price: number;
+
+  compareAtPrice: number | null;
+  costPrice: number | null;
+
+  active: boolean;
 };

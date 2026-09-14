@@ -358,3 +358,30 @@ export async function getProductImages(
 
   return data ?? [];
 }
+// ========================================
+// Product Variants
+// ========================================
+
+export async function getProductVariants(
+  productId: string
+) {
+  const { data, error } =
+    await supabaseAdmin
+      .from("product_variants")
+      .select("*")
+      .eq("product_id", productId)
+      .order("size", {
+        ascending: true,
+      });
+
+  if (error) {
+    console.error(
+      "Error loading product variants:",
+      error.message
+    );
+
+    return [];
+  }
+
+  return data ?? [];
+}

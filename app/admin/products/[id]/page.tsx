@@ -7,6 +7,7 @@ import {
   getCollections,
   getProductById,
   getProductImages,
+  getProductVariants,
   updateProduct,
 } from "../actions";
 
@@ -21,15 +22,24 @@ export default async function EditProductPage({
 }: EditProductPageProps) {
   const { id } = await params;
 
-  const product = await getProductById(id);
+  const product =
+    await getProductById(id);
 
   if (!product) {
     notFound();
   }
 
-  const categories = await getCategories();
-  const collections = await getCollections();
-  const images = await getProductImages(id);
+  const categories =
+    await getCategories();
+
+  const collections =
+    await getCollections();
+
+  const images =
+    await getProductImages(id);
+
+  const variants =
+    await getProductVariants(id);
 
   return (
     <div className="space-y-8">
@@ -48,6 +58,7 @@ export default async function EditProductPage({
         categories={categories}
         collections={collections}
         images={images}
+        variants={variants}
         action={updateProduct}
       />
     </div>

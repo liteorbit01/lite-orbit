@@ -3,14 +3,17 @@
 import { useState } from "react";
 
 import AdminTabs from "@/components/ui/AdminTabs";
+
 import ProductForm from "./ProductForm";
 import ProductImages from "./ProductImages";
+import ProductVariants from "./ProductVariants";
 
 import type {
   ProductFormData,
   CategoryOption,
   CollectionOption,
   ProductImage,
+  ProductVariant,
 } from "@/app/admin/products/types";
 
 type ProductEditorProps = {
@@ -18,6 +21,7 @@ type ProductEditorProps = {
   categories: CategoryOption[];
   collections: CollectionOption[];
   images: ProductImage[];
+  variants: ProductVariant[];
   action: (formData: FormData) => void | Promise<void>;
 };
 
@@ -26,6 +30,7 @@ export default function ProductEditor({
   categories,
   collections,
   images,
+  variants,
   action,
 }: ProductEditorProps) {
   const [activeTab, setActiveTab] =
@@ -77,16 +82,16 @@ export default function ProductEditor({
       )}
 
       {activeTab === "variants" && (
-        <ComingSoon
-          title="Variants"
-          description="Product variants will be implemented in Sprint 9."
+        <ProductVariants
+          productId={product.id!}
+          variants={variants}
         />
       )}
 
       {activeTab === "inventory" && (
         <ComingSoon
           title="Inventory"
-          description="Inventory management will be implemented in Sprint 10."
+          description="Inventory management will be implemented in Sprint 12."
         />
       )}
 
