@@ -2,29 +2,45 @@
 
 import { useState } from "react";
 
+import type {
+  ProductVariant,
+} from "@/app/admin/products/types";
+
 type VariantFormProps = {
   productId: string;
   onCancel: () => void;
+  variant?: ProductVariant;
 };
 
 export default function VariantForm({
   productId,
   onCancel,
+  variant,
 }: VariantFormProps) {
+  const isEditing = !!variant;
+
   const [saving, setSaving] =
     useState(false);
 
   const [form, setForm] = useState({
-    size: "",
-    color: "",
-    material: "",
-    sku: "",
-    price: "",
-    compareAtPrice: "",
-    costPrice: "",
-    barcode: "",
-    weight: "",
-    active: true,
+    size: variant?.size ?? "",
+    color: variant?.color ?? "",
+    material: variant?.material ?? "",
+    sku: variant?.sku ?? "",
+    price:
+      variant?.price?.toString() ?? "",
+    compareAtPrice:
+      variant?.compare_at_price?.toString() ??
+      "",
+    costPrice:
+      variant?.cost_price?.toString() ??
+      "",
+    barcode:
+      variant?.barcode ?? "",
+    weight:
+      variant?.weight?.toString() ?? "",
+    active:
+      variant?.active ?? true,
   });
 
   function update(
@@ -51,10 +67,18 @@ export default function VariantForm({
     try {
       setSaving(true);
 
+      const url = isEditing
+        ? `/api/admin/products/variants/${variant!.id}`
+        : "/api/admin/products/variants";
+
+      const method = isEditing
+        ? "PATCH"
+        : "POST";
+
       const response = await fetch(
-        "/api/admin/products/variants",
+        url,
         {
-          method: "POST",
+          method,
           headers: {
             "Content-Type":
               "application/json",
@@ -93,7 +117,9 @@ export default function VariantForm({
   return (
     <div className="mb-8 rounded-2xl border bg-gray-50 p-8">
       <h3 className="mb-6 text-xl font-semibold">
-        Add Product Variant
+        {isEditing
+          ? "Edit Product Variant"
+          : "Add Product Variant"}
       </h3>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -274,7 +300,6 @@ export default function VariantForm({
               )
             }
           />
-
           Active
         </label>
 
@@ -295,8 +320,12 @@ export default function VariantForm({
             className="rounded-lg bg-black px-6 py-3 text-white disabled:bg-gray-500"
           >
             {saving
-              ? "Saving..."
-              : "Save Variant"}
+              ? (isEditing
+                  ? "Updating..."
+                  : "Saving...")
+              : (isEditing
+                  ? "Update Variant"
+                  : "Save Variant")}
           </button>
 
         </div>

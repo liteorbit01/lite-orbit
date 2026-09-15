@@ -20,6 +20,11 @@ export default function ProductVariants({
   const [showForm, setShowForm] =
     useState(false);
 
+  const [editingVariant, setEditingVariant] =
+    useState<ProductVariant | undefined>(
+      undefined
+    );
+
   return (
     <section className="rounded-2xl bg-white p-10 shadow-sm">
       <div className="mb-8 flex items-center justify-between">
@@ -35,7 +40,10 @@ export default function ProductVariants({
 
         <button
           type="button"
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingVariant(undefined);
+            setShowForm(true);
+          }}
           className="rounded-lg bg-black px-6 py-3 text-white transition hover:bg-gray-800"
         >
           + Add Variant
@@ -45,9 +53,11 @@ export default function ProductVariants({
       {showForm && (
         <VariantForm
           productId={productId}
-          onCancel={() =>
-            setShowForm(false)
-          }
+          variant={editingVariant}
+          onCancel={() => {
+            setEditingVariant(undefined);
+            setShowForm(false);
+          }}
         />
       )}
 
@@ -90,6 +100,10 @@ export default function ProductVariants({
                 <th className="px-4 py-3 text-center text-sm font-semibold">
                   Active
                 </th>
+
+                <th className="px-4 py-3 text-center text-sm font-semibold">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -119,6 +133,21 @@ export default function ProductVariants({
                     {variant.active
                       ? "✅"
                       : "❌"}
+                  </td>
+
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingVariant(
+                          variant
+                        );
+                        setShowForm(true);
+                      }}
+                      className="rounded border px-3 py-1 text-sm transition hover:bg-gray-100"
+                    >
+                      ✏️ Edit
+                    </button>
                   </td>
                 </tr>
               ))}
