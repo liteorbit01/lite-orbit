@@ -25,6 +25,55 @@ export default function ProductVariants({
       undefined
     );
 
+  const [deletingId, setDeletingId] =
+    useState<string | null>(null);
+
+  async function deleteVariant(
+    variant: ProductVariant
+  ) {
+    const confirmed =
+      window.confirm(
+        `Delete variant "${variant.sku}"?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(variant.id);
+
+      const response = await fetch(
+        `/api/admin/products/variants/${variant.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const result =
+          await response.json();
+
+        throw new Error(
+          result.error ??
+            "Delete failed."
+        );
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Delete failed."
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <section className="rounded-2xl bg-white p-10 shadow-sm">
       <div className="mb-8 flex items-center justify-between">
@@ -136,18 +185,39 @@ export default function ProductVariants({
                   </td>
 
                   <td className="px-4 py-3 text-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingVariant(
-                          variant
-                        );
-                        setShowForm(true);
-                      }}
-                      className="rounded border px-3 py-1 text-sm transition hover:bg-gray-100"
-                    >
-                      ✏️ Edit
-                    </button>
+                    <div className="flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingVariant(
+                            variant
+                          );
+                          setShowForm(true);
+                        }}
+                        className="rounded border px-3 py-1 text-sm transition hover:bg-gray-100"
+                      >
+                        ✏️ Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          deleteVariant(
+                            variant
+                          )
+                        }
+                        disabled={
+                          deletingId ===
+                          variant.id
+                        }
+                        className="rounded border border-red-300 px-3 py-1 text-sm text-red-600 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {deletingId ===
+                        variant.id
+                          ? "..."
+                          : "🗑 Delete"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

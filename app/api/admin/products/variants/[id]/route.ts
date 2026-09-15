@@ -112,3 +112,45 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: RouteContext
+) {
+  try {
+    const { id } = await params;
+
+    const { error } =
+      await supabaseAdmin
+        .from("product_variants")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log(
+      "Variant deleted successfully."
+    );
+
+    return NextResponse.json({
+      success: true,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to delete variant.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
