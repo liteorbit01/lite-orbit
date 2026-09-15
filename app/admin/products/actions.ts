@@ -193,7 +193,7 @@ export async function createProduct(
     return;
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("products")
     .insert({
       brand_id: brand.id,
@@ -204,9 +204,7 @@ export async function createProduct(
       collection_id: product.collectionId,
       description: product.description,
       status: product.status,
-    })
-    .select()
-    .single();
+    });
 
   if (error) {
     console.error("Failed to create product:");
@@ -214,13 +212,9 @@ export async function createProduct(
     return;
   }
 
-  console.log("====================================");
-  console.log("Product created successfully");
-  console.table(data);
-  console.log("====================================");
-
   redirect("/admin/products");
 }
+
 // ========================================
 // Update Product
 // ========================================
@@ -262,10 +256,6 @@ export async function updateProduct(
       .trim(),
   };
 
-  // ----------------------------
-  // Validation
-  // ----------------------------
-
   const errors: string[] = [];
 
   if (!id) {
@@ -298,13 +288,9 @@ export async function updateProduct(
     return;
   }
 
-  // ----------------------------
-  // Update Product
-  // ----------------------------
-
   const supabase = supabaseAdmin;
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("products")
     .update({
       name: product.name,
@@ -315,9 +301,7 @@ export async function updateProduct(
       description: product.description,
       status: product.status,
     })
-    .eq("id", id)
-    .select()
-    .single();
+    .eq("id", id);
 
   if (error) {
     console.error("Failed to update product:");
@@ -325,13 +309,9 @@ export async function updateProduct(
     return;
   }
 
-  console.log("====================================");
-  console.log("Product updated successfully");
-  console.table(data);
-  console.log("====================================");
-
   redirect("/admin/products");
 }
+
 // ========================================
 // Product Images
 // ========================================
@@ -358,6 +338,7 @@ export async function getProductImages(
 
   return data ?? [];
 }
+
 // ========================================
 // Product Variants
 // ========================================

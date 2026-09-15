@@ -88,12 +88,6 @@ export async function PATCH(
       throw error;
     }
 
-    console.log(
-      "Variant updated successfully."
-    );
-
-    console.table(data);
-
     return NextResponse.json(data);
 
   } catch (error) {
@@ -129,10 +123,6 @@ export async function DELETE(
     if (error) {
       throw error;
     }
-
-    console.log(
-      "Variant deleted successfully."
-    );
 
     return NextResponse.json({
       success: true,

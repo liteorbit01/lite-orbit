@@ -67,6 +67,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
     });
+
   } catch (error) {
     console.error(error);
 

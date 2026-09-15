@@ -7,8 +7,11 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
-    const productId = formData.get("productId")?.toString();
-    const file = formData.get("file");
+    const productId =
+      formData.get("productId")?.toString();
+
+    const file =
+      formData.get("file");
 
     if (!productId) {
       return NextResponse.json(
@@ -32,21 +35,12 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("====================================");
-    console.log("Starting product image upload...");
-    console.log("Product:", productId);
-    console.log("File:", file.name);
-    console.log("====================================");
-
-    // Upload to Supabase Storage
+    // Upload image to Supabase Storage
     const { publicUrl } =
       await uploadProductImage(
         productId,
         file
       );
-
-    console.log("Storage upload successful.");
-    console.log("Public URL:", publicUrl);
 
     // Determine next display order
     const {
@@ -64,12 +58,7 @@ export async function POST(request: Request) {
       throw countError;
     }
 
-    console.log(
-      "Current image count:",
-      count ?? 0
-    );
-
-    // Insert database record
+    // Insert image record
     const { data, error } =
       await supabaseAdmin
         .from("product_images")
@@ -87,24 +76,17 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    console.log("====================================");
-    console.log("Image uploaded successfully.");
-    console.table(data);
-    console.log("====================================");
-
     return NextResponse.json(data);
+
   } catch (error) {
-    console.error("====================================");
-    console.error("IMAGE UPLOAD FAILED");
     console.error(error);
-    console.error("====================================");
 
     return NextResponse.json(
       {
         error:
           error instanceof Error
             ? error.message
-            : JSON.stringify(error),
+            : "Image upload failed.",
       },
       {
         status: 500,
