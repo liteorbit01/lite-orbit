@@ -56,24 +56,17 @@ export type ProductImage = {
 export type ProductVariant = {
   id: string;
   product_id: string;
-
   sku: string;
-
   size: string | null;
   color: string | null;
   material: string | null;
-
   barcode: string | null;
-
   weight: number | null;
-
   price: number;
-
   compare_at_price: number | null;
   cost_price: number | null;
-
+  stock_quantity: number;
   active: boolean;
-
   created_at: string;
   updated_at: string;
 };
@@ -84,15 +77,10 @@ export type VariantFormData = {
   size: string;
   color: string;
   material: string;
-
   barcode: string;
-
   weight: number | null;
-
   price: number;
-
   compareAtPrice: number | null;
   costPrice: number | null;
-
   active: boolean;
 };

@@ -7,6 +7,7 @@ import AdminTabs from "@/components/ui/AdminTabs";
 import ProductForm from "./ProductForm";
 import ProductImages from "./ProductImages";
 import ProductVariants from "./ProductVariants";
+import ProductInventory from "./ProductInventory";
 
 import type {
   ProductFormData,
@@ -34,7 +35,26 @@ export default function ProductEditor({
   action,
 }: ProductEditorProps) {
   const [activeTab, setActiveTab] =
-    useState("general");
+    useState(() => {
+      if (typeof window === "undefined") {
+        return "general";
+      }
+
+      return (
+        sessionStorage.getItem(
+          "product-editor-tab"
+        ) ?? "general"
+      );
+    });
+
+  function handleTabChange(tab: string) {
+    sessionStorage.setItem(
+      "product-editor-tab",
+      tab
+    );
+
+    setActiveTab(tab);
+  }
 
   return (
     <div className="space-y-6">
@@ -62,7 +82,7 @@ export default function ProductEditor({
           },
         ]}
         activeTab={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
       />
 
       {activeTab === "general" && (
@@ -89,9 +109,8 @@ export default function ProductEditor({
       )}
 
       {activeTab === "inventory" && (
-        <ComingSoon
-          title="Inventory"
-          description="Inventory management will be implemented in Sprint 12."
+        <ProductInventory
+          variants={variants}
         />
       )}
 
