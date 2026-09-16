@@ -366,3 +366,46 @@ export async function getProductVariants(
 
   return data ?? [];
 }
+// ========================================
+// Inventory History
+// ========================================
+
+export async function getInventoryHistory(
+  productId: string
+) {
+  const { data, error } =
+    await supabaseAdmin
+      .from("inventory_history")
+      .select(`
+        *,
+        product_variants (
+          sku,
+          size
+        )
+      `)
+      .in(
+        "variant_id",
+        (
+          await supabaseAdmin
+            .from("product_variants")
+            .select("id")
+            .eq("product_id", productId)
+        ).data?.map(
+          (variant) => variant.id
+        ) ?? []
+      )
+      .order("created_at", {
+        ascending: false,
+      });
+
+  if (error) {
+    console.error(
+      "Error loading inventory history:",
+      error.message
+    );
+
+    return [];
+  }
+
+  return data ?? [];
+}

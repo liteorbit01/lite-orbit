@@ -23,6 +23,7 @@ type ProductEditorProps = {
   collections: CollectionOption[];
   images: ProductImage[];
   variants: ProductVariant[];
+  inventoryHistory: any[];
   action: (formData: FormData) => void | Promise<void>;
 };
 
@@ -32,6 +33,7 @@ export default function ProductEditor({
   collections,
   images,
   variants,
+  inventoryHistory,
   action,
 }: ProductEditorProps) {
   const [activeTab, setActiveTab] =
@@ -112,6 +114,9 @@ export default function ProductEditor({
       {activeTab === "inventory" && (
         <ProductInventory
           variants={variants}
+          inventoryHistory={
+            inventoryHistory
+          }
         />
       )}
 

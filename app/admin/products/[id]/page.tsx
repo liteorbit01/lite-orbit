@@ -5,6 +5,7 @@ import ProductEditor from "@/components/admin/products/ProductEditor";
 import {
   getCategories,
   getCollections,
+  getInventoryHistory,
   getProductById,
   getProductImages,
   getProductVariants,
@@ -41,6 +42,9 @@ export default async function EditProductPage({
   const variants =
     await getProductVariants(id);
 
+  const inventoryHistory =
+    await getInventoryHistory(id);
+
   return (
     <div className="space-y-8">
       <div>
@@ -59,6 +63,9 @@ export default async function EditProductPage({
         collections={collections}
         images={images}
         variants={variants}
+        inventoryHistory={
+          inventoryHistory
+        }
         action={updateProduct}
       />
     </div>

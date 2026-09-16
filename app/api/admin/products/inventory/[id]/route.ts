@@ -22,7 +22,10 @@ export async function PATCH(
         | "increase"
         | "decrease";
 
-    // Load current stock
+    // ------------------------------------
+    // Load current variant
+    // ------------------------------------
+
     const {
       data: variant,
       error: loadError,
@@ -46,19 +49,28 @@ export async function PATCH(
       );
     }
 
-    let stock =
+    const currentStock =
       variant.stock_quantity ?? 0;
 
+    let newStock = currentStock;
+
+    let quantityChange = 0;
+
     if (direction === "increase") {
-      stock += 1;
+      newStock += 1;
+      quantityChange = 1;
     }
 
     if (direction === "decrease") {
-      stock = Math.max(
-        0,
-        stock - 1
-      );
+      if (currentStock > 0) {
+        newStock -= 1;
+        quantityChange = -1;
+      }
     }
+
+    // ------------------------------------
+    // Update variant stock
+    // ------------------------------------
 
     const {
       data,
@@ -66,7 +78,7 @@ export async function PATCH(
     } = await supabaseAdmin
       .from("product_variants")
       .update({
-        stock_quantity: stock,
+        stock_quantity: newStock,
       })
       .eq("id", id)
       .select()
@@ -74,6 +86,31 @@ export async function PATCH(
 
     if (updateError) {
       throw updateError;
+    }
+
+    // ------------------------------------
+    // Record inventory history
+    // ------------------------------------
+
+    const {
+      error: historyError,
+    } = await supabaseAdmin
+      .from("inventory_history")
+      .insert({
+        variant_id: id,
+        quantity_change:
+          quantityChange,
+        stock_after: newStock,
+        action: direction,
+        notes:
+          direction ===
+          "increase"
+            ? "Manual stock increase"
+            : "Manual stock decrease",
+      });
+
+    if (historyError) {
+      throw historyError;
     }
 
     return NextResponse.json(
