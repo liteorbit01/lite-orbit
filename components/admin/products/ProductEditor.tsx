@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AdminTabs from "@/components/ui/AdminTabs";
 
@@ -35,17 +35,18 @@ export default function ProductEditor({
   action,
 }: ProductEditorProps) {
   const [activeTab, setActiveTab] =
-    useState(() => {
-      if (typeof window === "undefined") {
-        return "general";
-      }
+    useState("general");
 
-      return (
-        sessionStorage.getItem(
-          "product-editor-tab"
-        ) ?? "general"
+  useEffect(() => {
+    const savedTab =
+      sessionStorage.getItem(
+        "product-editor-tab"
       );
-    });
+
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, []);
 
   function handleTabChange(tab: string) {
     sessionStorage.setItem(
