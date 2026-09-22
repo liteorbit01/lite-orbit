@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 type InventoryAdjustmentModalProps = {
   open: boolean;
@@ -32,19 +35,36 @@ export default function InventoryAdjustmentModal({
   const [notes, setNotes] =
     useState("");
 
+  const [saving, setSaving] =
+    useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setOperation("add");
+      setQuantity(1);
+      setReason("shipment");
+      setNotes("");
+      setSaving(false);
+    }
+  }, [open]);
+
   if (!open) {
     return null;
   }
 
   async function handleSubmit() {
-    await onSave(
-      operation,
-      quantity,
-      reason,
-      notes
-    );
+    try {
+      setSaving(true);
 
-    onClose();
+      await onSave(
+        operation,
+        quantity,
+        reason,
+        notes
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -71,6 +91,7 @@ export default function InventoryAdjustmentModal({
 
             <select
               value={operation}
+              disabled={saving}
               onChange={(e) =>
                 setOperation(
                   e.target.value as
@@ -78,7 +99,7 @@ export default function InventoryAdjustmentModal({
                     | "remove"
                 )
               }
-              className="w-full rounded-lg border p-3"
+              className="w-full rounded-lg border p-3 disabled:bg-gray-100"
             >
               <option value="add">
                 Add to Stock
@@ -99,12 +120,13 @@ export default function InventoryAdjustmentModal({
               type="number"
               min={1}
               value={quantity}
+              disabled={saving}
               onChange={(e) =>
                 setQuantity(
                   Number(e.target.value)
                 )
               }
-              className="w-full rounded-lg border p-3"
+              className="w-full rounded-lg border p-3 disabled:bg-gray-100"
             />
           </div>
 
@@ -115,35 +137,36 @@ export default function InventoryAdjustmentModal({
 
             <select
               value={reason}
+              disabled={saving}
               onChange={(e) =>
                 setReason(
                   e.target.value
                 )
               }
-              className="w-full rounded-lg border p-3"
+              className="w-full rounded-lg border p-3 disabled:bg-gray-100"
             >
               <option value="shipment">
-                New Shipment Received
+                📦 New Shipment Received
               </option>
 
               <option value="adjustment">
-                Inventory Correction
+                ⚙️ Inventory Correction
               </option>
 
               <option value="damaged">
-                Damaged Items
+                ❌ Damaged Items
               </option>
 
               <option value="return">
-                Customer Return
+                ↩️ Customer Return
               </option>
 
               <option value="sample">
-                Sample / Promotion
+                🎁 Sample / Promotion
               </option>
 
               <option value="other">
-                Other
+                📝 Other
               </option>
             </select>
           </div>
@@ -156,12 +179,13 @@ export default function InventoryAdjustmentModal({
             <textarea
               rows={4}
               value={notes}
+              disabled={saving}
               onChange={(e) =>
                 setNotes(
                   e.target.value
                 )
               }
-              className="w-full rounded-lg border p-3"
+              className="w-full rounded-lg border p-3 disabled:bg-gray-100"
               placeholder="Optional notes..."
             />
           </div>
@@ -172,18 +196,22 @@ export default function InventoryAdjustmentModal({
 
           <button
             type="button"
+            disabled={saving}
             onClick={onClose}
-            className="rounded-lg border px-5 py-2"
+            className="rounded-lg border px-5 py-2 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
 
           <button
             type="button"
+            disabled={saving}
             onClick={handleSubmit}
-            className="rounded-lg bg-black px-5 py-2 text-white"
+            className="rounded-lg bg-black px-5 py-2 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Save
+            {saving
+              ? "Saving..."
+              : "Save"}
           </button>
 
         </div>

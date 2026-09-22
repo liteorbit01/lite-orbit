@@ -73,7 +73,6 @@ export type ProductVariant = {
 
 export type VariantFormData = {
   sku: string;
-
   size: string;
   color: string;
   material: string;
@@ -83,4 +82,18 @@ export type VariantFormData = {
   compareAtPrice: number | null;
   costPrice: number | null;
   active: boolean;
+};
+
+export type InventoryHistoryItem = {
+  id: string;
+  variant_id: string;
+  quantity_change: number;
+  stock_after: number;
+  action: string;
+  notes: string | null;
+  created_at: string;
+  product_variants: {
+    sku: string;
+    size: string | null;
+  } | null;
 };

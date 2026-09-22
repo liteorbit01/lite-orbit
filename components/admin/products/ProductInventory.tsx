@@ -8,11 +8,12 @@ import InventoryAdjustmentModal from "./InventoryAdjustmentModal";
 
 import type {
   ProductVariant,
+  InventoryHistoryItem,
 } from "@/app/admin/products/types";
 
 type ProductInventoryProps = {
   variants: ProductVariant[];
-  inventoryHistory: any[];
+  inventoryHistory: InventoryHistoryItem[];
 };
 
 export default function ProductInventory({
@@ -23,9 +24,7 @@ export default function ProductInventory({
     useState<string | null>(null);
 
   const [selectedVariant, setSelectedVariant] =
-    useState<ProductVariant | null>(
-      null
-    );
+    useState<ProductVariant | null>(null);
 
   const [modalOpen, setModalOpen] =
     useState(false);
@@ -44,8 +43,7 @@ export default function ProductInventory({
         {
           method: "PATCH",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             direction,
@@ -77,64 +75,64 @@ export default function ProductInventory({
     }
   }
 
-async function handleAdjustmentSave(
-  operation: "add" | "remove",
-  quantity: number,
-  reason: string,
-  notes: string
-) {
-  if (!selectedVariant) {
-    return;
-  }
-
-  try {
-    setUpdatingId(
-      selectedVariant.id
-    );
-
-    const response = await fetch(
-      `/api/admin/products/inventory-adjustment/${selectedVariant.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          operation,
-          quantity,
-          reason,
-          notes,
-        }),
-      }
-    );
-
-    const result =
-      await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        result.error ??
-          "Unable to adjust inventory."
-      );
+  async function handleAdjustmentSave(
+    operation: "add" | "remove",
+    quantity: number,
+    reason: string,
+    notes: string
+  ) {
+    if (!selectedVariant) {
+      return;
     }
 
-    setModalOpen(false);
-    setSelectedVariant(null);
+    try {
+      setUpdatingId(
+        selectedVariant.id
+      );
 
-    router.refresh();
-  } catch (error) {
-    console.error(error);
+      const response = await fetch(
+        `/api/admin/products/inventory-adjustment/${selectedVariant.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            operation,
+            quantity,
+            reason,
+            notes,
+          }),
+        }
+      );
 
-    alert(
-      error instanceof Error
-        ? error.message
-        : "Unable to adjust inventory."
-    );
-  } finally {
-    setUpdatingId(null);
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Unable to adjust inventory."
+        );
+      }
+
+      setModalOpen(false);
+      setSelectedVariant(null);
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Unable to adjust inventory."
+      );
+    } finally {
+      setUpdatingId(null);
+    }
   }
-}
 
   return (
     <>
@@ -205,8 +203,7 @@ async function handleAdjustmentSave(
                         </td>
 
                         <td className="px-4 py-3">
-                          {variant.size ??
-                            "-"}
+                          {variant.size ?? "-"}
                         </td>
 
                         <td className="px-4 py-3 text-center font-semibold">
@@ -231,7 +228,6 @@ async function handleAdjustmentSave(
 
                         <td className="px-4 py-3">
                           <div className="flex justify-center gap-2">
-
                             <button
                               type="button"
                               disabled={
@@ -244,7 +240,7 @@ async function handleAdjustmentSave(
                                   "increase"
                                 )
                               }
-                              className="rounded border border-green-300 px-3 py-1 text-sm text-green-700 hover:bg-green-600 hover:text-white"
+                              className="rounded border border-green-300 px-3 py-1 text-sm text-green-700 transition hover:bg-green-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               +1
                             </button>
@@ -261,7 +257,7 @@ async function handleAdjustmentSave(
                                   "decrease"
                                 )
                               }
-                              className="rounded border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-600 hover:text-white"
+                              className="rounded border border-red-300 px-3 py-1 text-sm text-red-700 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               -1
                             </button>
@@ -276,11 +272,10 @@ async function handleAdjustmentSave(
                                   true
                                 );
                               }}
-                              className="rounded border border-blue-300 px-3 py-1 text-sm text-blue-700 hover:bg-blue-600 hover:text-white"
+                              className="rounded border border-blue-300 px-3 py-1 text-sm text-blue-700 transition hover:bg-blue-600 hover:text-white"
                             >
                               Adjust
                             </button>
-
                           </div>
                         </td>
                       </tr>
@@ -303,9 +298,10 @@ async function handleAdjustmentSave(
           selectedVariant?.stock_quantity ??
           0
         }
-        onClose={() =>
-          setModalOpen(false)
-        }
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedVariant(null);
+        }}
         onSave={handleAdjustmentSave}
       />
     </>
