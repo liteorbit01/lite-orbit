@@ -1,8 +1,8 @@
 import Link from "next/link"
-import { products } from "@/lib/products"
+import { getStoreProducts } from "@/lib/store/products";
 
-export default function Shop() {
-  const activeProducts = products.filter((p) => p.active)
+export default async function Shop() {
+  const activeProducts = await getStoreProducts();
 
   return (
     <main className="min-h-screen bg-[#F5F1EB] text-[#2F2F2F] py-24 px-6">
@@ -21,10 +21,10 @@ export default function Shop() {
             >
               <div className="overflow-hidden rounded-2xl mb-6">
                 <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="rounded-2xl transition-transform duration-500 group-hover:scale-105"
-                />
+                    src={product.image}
+                      alt={product.name}
+                      className="rounded-2xl transition-transform duration-500 group-hover:scale-105"
+/>
               </div>
 
               <h2 className="text-lg tracking-wide mb-2">
@@ -32,11 +32,13 @@ export default function Shop() {
               </h2>
 
               <p className="text-[#6B6B6B] mb-1">
-                {product.edition}
+                  Premium Collection
               </p>
 
               <p className="text-[#2F2F2F] font-medium">
-                From ${Math.min(...product.sizes.map(s => s.price))} CAD
+                {product.minPrice !== null
+                  ? `From $${product.minPrice} CAD`
+                  : "Coming Soon"}
               </p>
             </Link>
           ))}

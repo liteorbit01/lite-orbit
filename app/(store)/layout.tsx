@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import Script from "next/script";
 
-import Header from "@/components/Header";
+import Header from "@/components/layout/Header";
 import PageTransition from "@/providers/PageTransition";
 import { CartProvider } from "@/context/CartContext";
 
