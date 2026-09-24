@@ -1,23 +1,35 @@
-import { notFound } from "next/navigation"
-import { products } from "@/lib/products"
-import ProductClient from "./ProductClient"
+import { notFound } from "next/navigation";
+
+import {
+  getStoreProductBySlug,
+} from "@/lib/store/products";
+
+import ProductClient from "./ProductClient";
 
 type PageProps = {
   params: Promise<{
-    slug: string
-  }>
-}
+    slug: string;
+  }>;
+};
 
-export default async function ProductPage({ params }: PageProps) {
-  const resolvedParams = await params
+export default async function ProductPage({
+  params,
+}: PageProps) {
+  const { slug } =
+    await params;
 
-  const product = products.find(
-    (p) => p.slug === resolvedParams.slug
-  )
+  const product =
+    await getStoreProductBySlug(
+      slug
+    );
 
   if (!product) {
-    notFound()
+    notFound();
   }
 
-  return <ProductClient product={product} />
+  return (
+    <ProductClient
+      product={product}
+    />
+  );
 }
