@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import AddToCartButton from "@/components/cart/AddToCartButton";
+import { addItemToCart } from "@/app/cart/actions";
 
 import type {
   StoreProduct,
@@ -89,14 +91,12 @@ export default function ProductClient({
             {product.description}
           </p>
 
-          <button
-            disabled={
-              !selectedVariant
-            }
-            className="px-10 py-4 border border-[#2F2F2F] hover:bg-[#2F2F2F] hover:text-white transition-all duration-300 disabled:opacity-40"
-          >
-            Add to Cart
-          </button>
+          {selectedVariant && (
+             <AddToCartButton
+                variantId={selectedVariant.id}
+                onAddToCart={addItemToCart}
+              />
+           )}
         </div>
       </div>
     </main>
