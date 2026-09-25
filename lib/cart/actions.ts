@@ -165,9 +165,7 @@ export async function addToCart(
 
     const { error } =
       await supabaseAdmin
-        .from(
-          "shopping_cart_items"
-        )
+        .from("shopping_cart_items")
         .update({
           quantity: newQuantity,
         })
@@ -189,9 +187,7 @@ export async function addToCart(
 
   const { error } =
     await supabaseAdmin
-      .from(
-        "shopping_cart_items"
-      )
+      .from("shopping_cart_items")
       .insert({
         cart_id: cart.id,
         variant_id: variant.id,
@@ -210,6 +206,7 @@ export async function addToCart(
       "Item added to cart.",
   };
 }
+
 // ======================================================
 // Get Cart Items
 // ======================================================
@@ -224,6 +221,7 @@ export async function getCartItems(): Promise<ShoppingCartResponse> {
   } = await supabaseAdmin
     .from("shopping_cart_items")
     .select(`
+      id,
       quantity,
       cart_products_view (
         variant_id,
@@ -246,6 +244,8 @@ export async function getCartItems(): Promise<ShoppingCartResponse> {
   const items: CartProduct[] =
     (cartItems ?? []).map(
       (item: any) => ({
+        cart_item_id: item.id,
+
         ...item.cart_products_view,
 
         quantity:
@@ -266,6 +266,7 @@ export async function getCartItems(): Promise<ShoppingCartResponse> {
       ),
   };
 }
+
 // ======================================================
 // Update Cart Item Quantity
 // ======================================================

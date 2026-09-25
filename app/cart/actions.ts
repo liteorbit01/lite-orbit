@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import {
   addToCart,
   getCartItems,
@@ -15,10 +17,14 @@ import {
 export async function addItemToCart(
   variantId: string
 ) {
-  return addToCart(
+  const result = await addToCart(
     variantId,
     1
   );
+
+  revalidatePath("/cart");
+
+  return result;
 }
 
 export async function getShoppingCart() {
@@ -29,20 +35,35 @@ export async function updateCartQuantity(
   cartItemId: string,
   quantity: number
 ) {
-  return updateCartItemQuantity(
-    cartItemId,
-    quantity
-  );
+  const result =
+    await updateCartItemQuantity(
+      cartItemId,
+      quantity
+    );
+
+  revalidatePath("/cart");
+
+  return result;
 }
 
 export async function removeItemFromCart(
   cartItemId: string
 ) {
-  return removeCartItem(
-    cartItemId
-  );
+  const result =
+    await removeCartItem(
+      cartItemId
+    );
+
+  revalidatePath("/cart");
+
+  return result;
 }
 
 export async function emptyShoppingCart() {
-  return clearCart();
+  const result =
+    await clearCart();
+
+  revalidatePath("/cart");
+
+  return result;
 }

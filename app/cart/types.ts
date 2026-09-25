@@ -28,6 +28,8 @@ export type ShoppingCartItem = {
 };
 
 export type CartProduct = {
+  cart_item_id: string;
+
   variant_id: string;
 
   product_name: string;

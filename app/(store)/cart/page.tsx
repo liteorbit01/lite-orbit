@@ -1,5 +1,7 @@
+import CartItem from "@/components/cart/CartItem";
 import {
   getShoppingCart,
+  removeItemFromCart,
 } from "@/app/cart/actions";
 
 export default async function CartPage() {
@@ -20,32 +22,12 @@ export default async function CartPage() {
           </p>
         ) : (
           <>
-            {cart.items.map((item) => (
-              <div
-                key={item.variant_id}
-                className="flex justify-between items-center mb-8 border-b pb-6"
-              >
-                <div>
-                  <p className="text-lg">
-                    {item.product_name}
-                  </p>
-
-                  <p className="text-sm text-[#6B6B6B]">
-                    {item.size}
-                  </p>
-
-                  <p className="mt-2">
-                    Quantity: {item.quantity}
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-lg">
-                    ${item.subtotal.toFixed(2)} CAD
-                  </p>
-                </div>
-              </div>
-            ))}
+          {cart.items.map((item) => (
+              <CartItem
+                 key={item.cart_item_id}
+                 item={item}
+              />
+           ))}
 
             <div className="text-right text-xl font-medium mt-12">
               Total: $
