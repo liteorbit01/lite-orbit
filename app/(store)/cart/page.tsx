@@ -1,7 +1,8 @@
 import CartItem from "@/components/cart/CartItem";
+import ClearCartButton from "@/components/cart/ClearCartButton";
+
 import {
   getShoppingCart,
-  removeItemFromCart,
 } from "@/app/cart/actions";
 
 export default async function CartPage() {
@@ -37,17 +38,21 @@ export default async function CartPage() {
               CAD
             </div>
 
-            <div className="flex justify-end mt-8">
-              <button
-                className="bg-[#2F2F2F] text-white px-8 py-3"
-              >
-                Checkout
-              </button>
-            </div>
-          </>
-        )}
+            <div className="flex justify-between mt-8">
 
-      </div>
+                <ClearCartButton />
+
+                 <button
+                     className="bg-[#2F2F2F] text-white px-8 py-3"
+                   >
+                       Checkout
+                   </button>
+
+              </div>
+              </>
+          )}
+
+       </div>
     </main>
-  );
+);
 }
