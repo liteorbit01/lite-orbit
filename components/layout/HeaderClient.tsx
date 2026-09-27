@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+import CartBadge from "@/components/cart/CartBadge";
+
 type HeaderClientProps = {
   itemCount: number;
 };
@@ -13,15 +15,16 @@ export default function HeaderClient({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow =
-      open ? "hidden" : "auto";
+    document.body.style.overflow = open ? "hidden" : "auto";
   }, [open]);
 
   return (
     <header className="relative z-50 border-b border-[#E5E0D8]">
 
+      {/* Top Bar */}
       <div className="px-6 md:px-10 py-6 md:py-8 max-w-7xl mx-auto w-full flex items-center justify-between">
 
+        {/* Logo */}
         <Link
           href="/"
           className="flex items-center space-x-3"
@@ -36,8 +39,7 @@ export default function HeaderClient({
             <span
               className="block text-base md:text-3xl italic"
               style={{
-                fontFamily:
-                  "'Playfair Display', serif",
+                fontFamily: "'Playfair Display', serif",
               }}
             >
               Lite Orbit
@@ -49,91 +51,102 @@ export default function HeaderClient({
           </div>
         </Link>
 
-        <nav className="hidden md:flex space-x-10 text-sm text-[#6B6B6B] items-center">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/collection">Collection</Link>
-          <Link href="/shop">Shop</Link>
-          <Link href="/contact">Contact</Link>
-
-          <Link href="/cart">
-            Cart
-
-            {itemCount > 0 && (
-              <span className="ml-1 font-medium">
-                ({itemCount})
-              </span>
-            )}
-          </Link>
-        </nav>
-
-        <button
-          onClick={() =>
-            setOpen(!open)
-          }
-          className="md:hidden text-3xl z-50"
-        >
-          {open ? "✕" : "☰"}
-        </button>
-      </div>
-
-      {open && (
-        <div className="fixed inset-0 bg-[#F5F1EB]/95 backdrop-blur-md flex flex-col items-center justify-center space-y-10 text-2xl text-[#2F2F2F] tracking-wide md:hidden">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-10 text-sm text-[#6B6B6B]">
 
           <Link
             href="/"
-            onClick={() =>
-              setOpen(false)
-            }
+            className="hover:text-black transition"
           >
             Home
           </Link>
 
           <Link
             href="/about"
-            onClick={() =>
-              setOpen(false)
-            }
+            className="hover:text-black transition"
           >
             About
           </Link>
 
           <Link
             href="/collection"
-            onClick={() =>
-              setOpen(false)
-            }
+            className="hover:text-black transition"
           >
             Collection
           </Link>
 
           <Link
             href="/shop"
-            onClick={() =>
-              setOpen(false)
-            }
+            className="hover:text-black transition"
           >
             Shop
           </Link>
 
           <Link
             href="/contact"
-            onClick={() =>
-              setOpen(false)
-            }
+            className="hover:text-black transition"
+          >
+            Contact
+          </Link>
+
+          <CartBadge itemCount={itemCount} />
+
+        </nav>
+
+        {/* Mobile Hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden text-3xl z-50"
+        >
+          {open ? "✕" : "☰"}
+        </button>
+      </div>
+
+      {/* Mobile Fullscreen Menu */}
+      {open && (
+        <div className="fixed inset-0 bg-[#F5F1EB]/95 backdrop-blur-md flex flex-col items-center justify-center space-y-10 text-2xl text-[#2F2F2F] tracking-wide md:hidden">
+
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/about"
+            onClick={() => setOpen(false)}
+          >
+            About
+          </Link>
+
+          <Link
+            href="/collection"
+            onClick={() => setOpen(false)}
+          >
+            Collection
+          </Link>
+
+          <Link
+            href="/shop"
+            onClick={() => setOpen(false)}
+          >
+            Shop
+          </Link>
+
+          <Link
+            href="/contact"
+            onClick={() => setOpen(false)}
           >
             Contact
           </Link>
 
           <Link
             href="/cart"
-            onClick={() =>
-              setOpen(false)
-            }
+            onClick={() => setOpen(false)}
           >
             Cart
-            {itemCount > 0 &&
-              ` (${itemCount})`}
+            {itemCount > 0 && ` (${itemCount})`}
           </Link>
 
         </div>
