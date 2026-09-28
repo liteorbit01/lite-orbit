@@ -1,5 +1,5 @@
 "use client";
-
+import { CheckoutProvider } from "@/context/CheckoutContext";
 import type {
   ShoppingCartResponse,
 } from "@/app/cart/types";
@@ -17,6 +17,7 @@ export default function CheckoutForm({
   cart,
 }: CheckoutFormProps) {
   return (
+  <CheckoutProvider>
     <main className="min-h-screen bg-[#F5F1EB] py-24 px-6">
 
       <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-16">
@@ -46,5 +47,6 @@ export default function CheckoutForm({
       </div>
 
     </main>
+  </CheckoutProvider>
   );
 }

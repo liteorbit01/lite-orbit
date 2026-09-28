@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCheckout } from "@/context/CheckoutContext";
 
 export default function ShippingAddressForm() {
-  const [sameAsBilling, setSameAsBilling] =
-    useState(true);
+  const {
+    shipping,
+    setShipping,
+    useBillingForShipping,
+    setUseBillingForShipping,
+  } = useCheckout();
 
   return (
     <section>
@@ -13,9 +17,11 @@ export default function ShippingAddressForm() {
 
         <input
           type="checkbox"
-          checked={sameAsBilling}
-          onChange={() =>
-            setSameAsBilling(!sameAsBilling)
+          checked={useBillingForShipping}
+          onChange={(e) =>
+            setUseBillingForShipping(
+              e.target.checked
+            )
           }
           className="h-5 w-5 accent-[#2F2F2F]"
         />
@@ -26,7 +32,7 @@ export default function ShippingAddressForm() {
 
       </label>
 
-      {!sameAsBilling && (
+      {!useBillingForShipping && (
 
         <>
           <h2 className="text-2xl mb-6">
@@ -36,66 +42,114 @@ export default function ShippingAddressForm() {
           <div className="grid md:grid-cols-2 gap-6">
 
             <select
-              defaultValue=""
+              value={shipping.country}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  country: e.target.value,
+                })
+              }
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             >
-              <option value="" disabled>
+              <option value="">
                 Select Country
               </option>
 
-              <option>
+              <option value="Canada">
                 Canada
               </option>
 
-              <option>
+              <option value="United States">
                 United States
               </option>
 
             </select>
 
             <select
-              defaultValue=""
+              value={shipping.province}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  province: e.target.value,
+                })
+              }
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             >
-              <option value="" disabled>
+              <option value="">
                 Province / State
               </option>
 
-              <option>
+              <option value="Manitoba">
                 Manitoba
               </option>
 
-              <option>
+              <option value="Ontario">
                 Ontario
               </option>
 
-              <option>
+              <option value="Alberta">
                 Alberta
               </option>
 
-              <option>
+              <option value="British Columbia">
                 British Columbia
+              </option>
+
+              <option value="Quebec">
+                Quebec
               </option>
 
             </select>
 
             <input
+              type="text"
               placeholder="City"
+              value={shipping.city}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  city: e.target.value,
+                })
+              }
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
             <input
+              type="text"
               placeholder="Postal / ZIP Code"
+              value={shipping.postalCode}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  postalCode: e.target.value,
+                })
+              }
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
             <input
+              type="text"
               placeholder="Street Address"
+              value={shipping.street}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  street: e.target.value,
+                })
+              }
               className="md:col-span-2 border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
             <input
+              type="text"
               placeholder="Apartment / Suite (optional)"
+              value={shipping.apartment}
+              onChange={(e) =>
+                setShipping({
+                  ...shipping,
+                  apartment: e.target.value,
+                })
+              }
               className="md:col-span-2 border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
