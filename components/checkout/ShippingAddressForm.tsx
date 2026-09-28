@@ -1,6 +1,8 @@
 "use client";
 
 import { useCheckout } from "@/context/CheckoutContext";
+import { countries } from "@/data/countries";
+import { provinces } from "@/data/provinces";
 
 export default function ShippingAddressForm() {
   const {
@@ -41,12 +43,15 @@ export default function ShippingAddressForm() {
 
           <div className="grid md:grid-cols-2 gap-6">
 
+            {/* Country */}
+
             <select
               value={shipping.country}
               onChange={(e) =>
                 setShipping({
                   ...shipping,
                   country: e.target.value,
+                  province: "",
                 })
               }
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
@@ -55,15 +60,17 @@ export default function ShippingAddressForm() {
                 Select Country
               </option>
 
-              <option value="Canada">
-                Canada
-              </option>
-
-              <option value="United States">
-                United States
-              </option>
-
+              {countries.map((country) => (
+                <option
+                  key={country.code}
+                  value={country.code}
+                >
+                  {country.name}
+                </option>
+              ))}
             </select>
+
+            {/* Province / State */}
 
             <select
               value={shipping.province}
@@ -79,27 +86,20 @@ export default function ShippingAddressForm() {
                 Province / State
               </option>
 
-              <option value="Manitoba">
-                Manitoba
-              </option>
-
-              <option value="Ontario">
-                Ontario
-              </option>
-
-              <option value="Alberta">
-                Alberta
-              </option>
-
-              <option value="British Columbia">
-                British Columbia
-              </option>
-
-              <option value="Quebec">
-                Quebec
-              </option>
-
+              {shipping.country &&
+                provinces[
+                  shipping.country as keyof typeof provinces
+                ]?.map((province) => (
+                  <option
+                    key={province}
+                    value={province}
+                  >
+                    {province}
+                  </option>
+                ))}
             </select>
+
+            {/* City */}
 
             <input
               type="text"
@@ -114,6 +114,8 @@ export default function ShippingAddressForm() {
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
+            {/* Postal Code */}
+
             <input
               type="text"
               placeholder="Postal / ZIP Code"
@@ -127,6 +129,8 @@ export default function ShippingAddressForm() {
               className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
 
+            {/* Street */}
+
             <input
               type="text"
               placeholder="Street Address"
@@ -139,6 +143,8 @@ export default function ShippingAddressForm() {
               }
               className="md:col-span-2 border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
             />
+
+            {/* Apartment */}
 
             <input
               type="text"
@@ -154,6 +160,7 @@ export default function ShippingAddressForm() {
             />
 
           </div>
+
         </>
 
       )}

@@ -1,6 +1,8 @@
 "use client";
 
 import { useCheckout } from "@/context/CheckoutContext";
+import { countries } from "@/data/countries";
+import { provinces } from "@/data/provinces";
 
 export default function BillingAddressForm() {
   const {
@@ -17,12 +19,15 @@ export default function BillingAddressForm() {
 
       <div className="grid md:grid-cols-2 gap-6">
 
+        {/* Country */}
+
         <select
           value={billing.country}
           onChange={(e) =>
             setBilling({
               ...billing,
               country: e.target.value,
+              province: "",
             })
           }
           className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
@@ -31,15 +36,17 @@ export default function BillingAddressForm() {
             Select Country
           </option>
 
-          <option value="Canada">
-            Canada
-          </option>
-
-          <option value="United States">
-            United States
-          </option>
-
+          {countries.map((country) => (
+            <option
+              key={country.code}
+              value={country.code}
+            >
+              {country.name}
+            </option>
+          ))}
         </select>
+
+        {/* Province / State */}
 
         <select
           value={billing.province}
@@ -55,27 +62,20 @@ export default function BillingAddressForm() {
             Province / State
           </option>
 
-          <option value="Manitoba">
-            Manitoba
-          </option>
-
-          <option value="Ontario">
-            Ontario
-          </option>
-
-          <option value="Alberta">
-            Alberta
-          </option>
-
-          <option value="British Columbia">
-            British Columbia
-          </option>
-
-          <option value="Quebec">
-            Quebec
-          </option>
-
+          {billing.country &&
+            provinces[
+              billing.country as keyof typeof provinces
+            ]?.map((province) => (
+              <option
+                key={province}
+                value={province}
+              >
+                {province}
+              </option>
+            ))}
         </select>
+
+        {/* City */}
 
         <input
           type="text"
@@ -90,6 +90,8 @@ export default function BillingAddressForm() {
           className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
         />
 
+        {/* Postal Code */}
+
         <input
           type="text"
           placeholder="Postal / ZIP Code"
@@ -103,6 +105,8 @@ export default function BillingAddressForm() {
           className="border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
         />
 
+        {/* Street */}
+
         <input
           type="text"
           placeholder="Street Address"
@@ -115,6 +119,8 @@ export default function BillingAddressForm() {
           }
           className="md:col-span-2 border border-[#D9D4CC] rounded-lg p-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F2F2F]"
         />
+
+        {/* Apartment */}
 
         <input
           type="text"

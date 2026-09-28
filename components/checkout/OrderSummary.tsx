@@ -1,6 +1,12 @@
+"use client";
+
 import type {
   ShoppingCartResponse,
 } from "@/app/cart/types";
+
+import { useCheckout } from "@/context/CheckoutContext";
+
+import { calculateTaxes } from "@/lib/checkout/calculateTaxes";
 
 type OrderSummaryProps = {
   cart: ShoppingCartResponse;
@@ -9,6 +15,28 @@ type OrderSummaryProps = {
 export default function OrderSummary({
   cart,
 }: OrderSummaryProps) {
+
+  const {
+    billing,
+    useBillingForShipping,
+  } = useCheckout();
+
+  const shippingDestination =
+    useBillingForShipping
+      ? billing.province
+      : "Separate shipping address";
+
+  const taxes =
+    calculateTaxes(
+      cart.summary.subtotal,
+      billing.country,
+      billing.province
+    );
+
+  const total =
+    cart.summary.subtotal +
+    taxes;
+
   return (
     <aside className="bg-white rounded-2xl shadow-sm p-8 h-fit sticky top-28">
 
@@ -51,31 +79,58 @@ export default function OrderSummary({
         <hr className="border-[#E5E0D8]" />
 
         <div className="flex justify-between">
+
           <span>Subtotal</span>
+
           <span>
             $
             {cart.summary.subtotal.toFixed(2)}
           </span>
+
+        </div>
+
+        <div className="flex justify-between">
+
+          <span>Destination</span>
+
+          <span className="text-[#6B6B6B]">
+            {shippingDestination || "--"}
+          </span>
+
         </div>
 
         <div className="flex justify-between text-[#6B6B6B]">
+
           <span>Shipping</span>
-          <span>Calculated at payment</span>
+
+          <span>
+            Calculated later
+          </span>
+
         </div>
 
-        <div className="flex justify-between text-[#6B6B6B]">
+        <div className="flex justify-between">
+
           <span>Taxes</span>
-          <span>Calculated at payment</span>
+
+          <span>
+            $
+            {taxes.toFixed(2)}
+          </span>
+
         </div>
 
         <hr className="border-[#E5E0D8]" />
 
         <div className="flex justify-between text-xl font-semibold">
+
           <span>Total</span>
+
           <span>
             $
-            {cart.summary.subtotal.toFixed(2)}
+            {total.toFixed(2)}
           </span>
+
         </div>
 
         <button
