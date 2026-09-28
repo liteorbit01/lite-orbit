@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import type {
   ShoppingCartResponse,
 } from "@/app/cart/types";
@@ -146,6 +146,26 @@ export default function OrderSummary({
             Please complete all required checkout information.
           </p>
         )}
+        <Link
+            href="/cart"
+            className="
+            mb-4
+            flex
+            w-full
+            items-center
+            justify-center
+            rounded-xl
+            border
+            border-[#2F2F2F]
+            py-4
+            font-medium
+            text-[#2F2F2F]
+            transition
+            hover:bg-[#F5F1EB]
+            "
+        >
+           ← Back to Cart
+        </Link>
 
         <button
           disabled={!isCheckoutValid}
@@ -163,7 +183,7 @@ export default function OrderSummary({
                 : "bg-gray-400 cursor-not-allowed"
             }
           `}
-        >
+              >
           Continue to Payment
         </button>
 
