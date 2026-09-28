@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import CartItem from "@/components/cart/CartItem";
 import ClearCartButton from "@/components/cart/ClearCartButton";
 
@@ -11,6 +13,7 @@ export default async function CartPage() {
 
   return (
     <main className="min-h-screen bg-[#F5F1EB] py-24 px-6 text-[#2F2F2F]">
+
       <div className="max-w-5xl mx-auto">
 
         <h1 className="text-4xl mb-12 font-light">
@@ -18,41 +21,77 @@ export default async function CartPage() {
         </h1>
 
         {cart.items.length === 0 ? (
-          <p className="text-[#6B6B6B]">
-            Your cart is empty.
-          </p>
+
+          <div className="space-y-8">
+
+            <p className="text-[#6B6B6B]">
+              Your cart is empty.
+            </p>
+
+            <Link
+              href="/shop"
+              className="
+                inline-block
+                bg-[#2F2F2F]
+                text-white
+                px-8
+                py-3
+                transition
+                hover:bg-black
+              "
+            >
+              Continue Shopping
+            </Link>
+
+          </div>
+
         ) : (
+
           <>
-          {cart.items.map((item) => (
+
+            {cart.items.map((item) => (
               <CartItem
-                 key={item.cart_item_id}
-                 item={item}
+                key={item.cart_item_id}
+                item={item}
               />
-           ))}
+            ))}
 
             <div className="text-right text-xl font-medium mt-12">
+
               Total: $
-              {cart.summary.subtotal.toFixed(
-                2
-              )}{" "}
+
+              {cart.summary.subtotal.toFixed(2)}{" "}
+
               CAD
+
             </div>
 
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between mt-10">
 
-                <ClearCartButton />
+              <ClearCartButton />
 
-                 <button
-                     className="bg-[#2F2F2F] text-white px-8 py-3"
-                   >
-                       Checkout
-                   </button>
+              <Link
+                href="/checkout"
+                className="
+                  bg-[#2F2F2F]
+                  text-white
+                  px-8
+                  py-3
+                  hover:bg-black
+                  transition
+                "
+              >
+                Checkout
+              </Link>
 
-              </div>
-              </>
-          )}
+            </div>
 
-       </div>
+          </>
+
+        )}
+
+      </div>
+
     </main>
-);
+  );
 }

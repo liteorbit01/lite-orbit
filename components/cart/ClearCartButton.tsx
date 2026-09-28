@@ -10,8 +10,10 @@ import {
 export default function ClearCartButton() {
   const router = useRouter();
 
-  const [isPending, startTransition] =
-    useTransition();
+  const [
+    isPending,
+    startTransition,
+  ] = useTransition();
 
   function handleClearCart() {
     startTransition(async () => {
