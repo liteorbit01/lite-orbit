@@ -1,4 +1,5 @@
 "use client";
+import ContinueToPaymentButton from "./ContinueToPaymentButton";
 import Link from "next/link";
 import type {
   ShoppingCartResponse,
@@ -167,25 +168,7 @@ export default function OrderSummary({
            ← Back to Cart
         </Link>
 
-        <button
-          disabled={!isCheckoutValid}
-          className={`
-            mt-8
-            w-full
-            rounded-xl
-            py-4
-            text-white
-            font-medium
-            transition
-            ${
-              isCheckoutValid
-                ? "bg-[#2F2F2F] hover:bg-black"
-                : "bg-gray-400 cursor-not-allowed"
-            }
-          `}
-              >
-          Continue to Payment
-        </button>
+        <ContinueToPaymentButton />
 
       </div>
 
