@@ -18,11 +18,13 @@ export default function ContinueToPaymentButton() {
           }
         );
 
-      const data =
-        await response.json();
+   const data = await response.json();
 
-      window.location.href =
-        data.url;
+console.log(data);
+
+alert("Cart loaded successfully.");
+
+setLoading(false);
 
     } catch (error) {
 

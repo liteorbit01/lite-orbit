@@ -1,43 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { stripe } from "@/lib/stripe/stripe";
+import { getCartItems } from "@/lib/cart/actions";
 
 export async function POST() {
   try {
-    const session =
-      await stripe.checkout.sessions.create({
-        mode: "payment",
+    const cart = await getCartItems();
 
-        payment_method_types: [
-          "card",
-        ],
-
-        line_items: [
-          {
-            price_data: {
-              currency: "cad",
-
-              product_data: {
-                name: "Lite Orbit Test Order",
-              },
-
-              unit_amount: 1000, // $10.00 CAD
-            },
-
-            quantity: 1,
-          },
-        ],
-
-        success_url:
-          "http://localhost:3000/payment/success",
-
-        cancel_url:
-          "http://localhost:3000/checkout",
-      });
-
-    return NextResponse.json({
-      url: session.url,
-    });
+    return NextResponse.json(cart);
 
   } catch (error) {
 
@@ -45,8 +14,7 @@ export async function POST() {
 
     return NextResponse.json(
       {
-        error:
-          "Unable to create Stripe session",
+        error: "Unable to load shopping cart.",
       },
       {
         status: 500,
