@@ -38,3 +38,74 @@ export async function getExistingCart(): Promise<ShoppingCart | null> {
 
   return data;
 }
+import type {
+  ShoppingCartResponse,
+  CartProduct,
+} from "@/app/cart/types";
+
+import {
+  calculateCartSummary,
+} from "./calculations";
+
+export async function getExistingCartItems(): Promise<ShoppingCartResponse> {
+
+  const cart =
+    await getExistingCart();
+
+  if (!cart) {
+    return {
+      items: [],
+      summary: {
+        subtotal: 0,
+        itemCount: 0,
+      },
+    };
+  }
+
+  const {
+    data: cartItems,
+    error,
+  } = await supabaseAdmin
+    .from("shopping_cart_items")
+    .select(`
+      id,
+      quantity,
+      cart_products_view (
+        variant_id,
+        product_name,
+        sku,
+        slug,
+        image_url,
+        size,
+        color,
+        price,
+        stock_quantity
+      )
+    `)
+    .eq("cart_id", cart.id);
+
+  if (error) {
+    throw error;
+  }
+
+  const items: CartProduct[] =
+    (cartItems ?? []).map(
+      (item: any) => ({
+        cart_item_id: item.id,
+
+        ...item.cart_products_view,
+
+        quantity: item.quantity,
+
+        subtotal:
+          item.quantity *
+          item.cart_products_view.price,
+      })
+    );
+
+  return {
+    items,
+    summary:
+      calculateCartSummary(items),
+  };
+}
