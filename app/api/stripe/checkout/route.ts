@@ -1,3 +1,6 @@
+import {
+  getExistingCart,
+} from "@/lib/cart/service";
 import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe/stripe";
@@ -11,6 +14,19 @@ export async function POST() {
 
     const cart =
       await getExistingCartItems();
+      const shoppingCart =
+  await getExistingCart();
+
+if (!shoppingCart) {
+  return NextResponse.json(
+    {
+      error: "Shopping cart not found.",
+    },
+    {
+      status: 400,
+    }
+  );
+}
 
     if (cart.items.length === 0) {
       return NextResponse.json(
@@ -64,6 +80,20 @@ export async function POST() {
       await stripe.checkout.sessions.create({
 
         mode: "payment",
+        customer_creation: "always",
+
+        billing_address_collection: "required",
+
+        phone_number_collection: {
+        enabled: true,
+          },
+
+              metadata: {
+
+                cart_id:
+                shoppingCart.id,
+
+        },
 
         payment_method_types: [
           "card",
