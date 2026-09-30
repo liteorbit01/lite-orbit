@@ -76,7 +76,7 @@ export async function POST() {
           "http://localhost:3000/payment/success",
 
         cancel_url:
-          "http://localhost:3000/checkout",
+          "http://localhost:3000/payment/cancelled",
 
       });
 
