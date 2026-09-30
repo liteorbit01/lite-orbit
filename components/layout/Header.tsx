@@ -1,12 +1,13 @@
 import {
-  getShoppingCart,
-} from "@/app/cart/actions";
+  getExistingCartItems,
+} from "@/lib/cart/service";
 
 import HeaderClient from "./HeaderClient";
 
 export default async function Header() {
+
   const cart =
-    await getShoppingCart();
+    await getExistingCartItems();
 
   return (
     <HeaderClient

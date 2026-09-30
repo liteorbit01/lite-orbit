@@ -20,12 +20,7 @@ export default function ContinueToPaymentButton() {
 
    const data = await response.json();
 
-console.log(data);
-
-alert("Cart loaded successfully.");
-
-setLoading(false);
-
+   window.location.href = data.url;
     } catch (error) {
 
       console.error(error);

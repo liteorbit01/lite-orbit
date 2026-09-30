@@ -2,13 +2,26 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe/stripe";
 
-import { getCartItems } from "@/lib/cart/actions";
+import {
+  getExistingCartItems,
+} from "@/lib/cart/service";
 
 export async function POST() {
   try {
 
     const cart =
-      await getCartItems();
+      await getExistingCartItems();
+
+    if (cart.items.length === 0) {
+      return NextResponse.json(
+        {
+          error: "Shopping cart is empty.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     const lineItems =
       cart.items.map((item) => ({
@@ -47,10 +60,28 @@ export async function POST() {
 
       }));
 
+    const session =
+      await stripe.checkout.sessions.create({
+
+        mode: "payment",
+
+        payment_method_types: [
+          "card",
+        ],
+
+        line_items:
+          lineItems,
+
+        success_url:
+          "http://localhost:3000/payment/success",
+
+        cancel_url:
+          "http://localhost:3000/checkout",
+
+      });
+
     return NextResponse.json({
-      lineItems,
-      subtotal:
-        cart.summary.subtotal,
+      url: session.url,
     });
 
   } catch (error) {
@@ -60,7 +91,7 @@ export async function POST() {
     return NextResponse.json(
       {
         error:
-          "Unable to build Stripe line items.",
+          "Unable to create Stripe Checkout session.",
       },
       {
         status: 500,
