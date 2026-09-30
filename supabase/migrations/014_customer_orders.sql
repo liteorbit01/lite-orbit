@@ -1,0 +1,11 @@
+-- ======================================================
+-- 014_customer_orders.sql
+-- ======================================================
+-- Reserved for customer-facing order features.
+--
+-- Future enhancements:
+-- - Customer order history
+-- - Order details page
+-- - Reorder functionality
+-- - Order search
+-- - Customer invoices
