@@ -1,3 +1,5 @@
+import { createOrder } from "@/lib/orders/service";
+import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -23,17 +25,72 @@ export async function POST(request: Request) {
         signature,
         process.env.STRIPE_WEBHOOK_SECRET!
       );
+      console.log("Stripe Event:", event.type);
 
     switch (event.type) {
 
-      case "checkout.session.completed":
+      case "checkout.session.completed": {
 
-        console.log(
-          "Checkout completed:",
-          event.data.object.id
-        );
+  const session =
+    event.data.object as Stripe.Checkout.Session;
 
-        break;
+  await createOrder({
+
+    customerId: null,
+
+    cartId:
+      session.metadata?.cart_id ?? "",
+
+    stripeSessionId:
+      session.id,
+
+    stripePaymentIntent:
+      String(session.payment_intent),
+
+    currencyCode:
+      (
+        session.currency ??
+        "cad"
+      ).toUpperCase(),
+
+    subtotal:
+      (session.amount_subtotal ?? 0) /
+      100,
+
+    shippingTotal:
+      (
+        session.total_details
+          ?.amount_shipping ?? 0
+      ) / 100,
+
+    taxTotal:
+      (
+        session.total_details
+          ?.amount_tax ?? 0
+      ) / 100,
+
+    discountTotal:
+      (
+        session.total_details
+          ?.amount_discount ?? 0
+      ) / 100,
+
+    grandTotal:
+      (session.amount_total ?? 0) /
+      100,
+
+    notes:
+      null,
+
+  });
+
+  console.log(
+    "Order created:",
+    session.id
+  );
+
+  break;
+}
 
       default:
 
