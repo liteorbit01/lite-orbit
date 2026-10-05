@@ -1,3 +1,4 @@
+import { getOrderByStripeSession } from "@/lib/orders/getByStripeSession";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -57,6 +58,23 @@ export async function POST(
 
         const session =
           event.data.object as Stripe.Checkout.Session;
+          const existingOrder =
+  await getOrderByStripeSession(
+    session.id
+  );
+
+if (existingOrder) {
+
+  console.log(
+    "Duplicate webhook ignored:",
+    existingOrder.order_number
+  );
+
+  return NextResponse.json({
+    received: true,
+  });
+
+}
 
         const cartId =
           session.metadata?.cart_id;
