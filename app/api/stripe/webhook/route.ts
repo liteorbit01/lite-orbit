@@ -1,3 +1,4 @@
+import { decreaseInventory } from "@/lib/inventory/adjust";
 import { getOrderByStripeSession } from "@/lib/orders/getByStripeSession";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -167,6 +168,26 @@ if (existingOrder) {
           order.id,
           cart.items
         );
+
+        for (const item of cart.items) {
+
+  console.log(
+    "Updating inventory:",
+    item.variant_id,
+    item.quantity
+  );
+
+  await decreaseInventory(
+    item.variant_id,
+    item.quantity
+  );
+
+}
+
+console.log(
+  "Inventory updated."
+);
+
 
         console.log(
           "Order items created."
