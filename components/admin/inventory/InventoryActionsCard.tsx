@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import ReceiveShipmentModal from "./ReceiveShipmentModal";
+import StockAdjustmentModal from "./StockAdjustmentModal";
 
 type InventoryActionsCardProps = {
   variantId: string;
@@ -12,8 +13,15 @@ export default function InventoryActionsCard({
   variantId,
 }: InventoryActionsCardProps) {
 
-  const [receiveOpen, setReceiveOpen] =
-    useState(false);
+  const [
+    receiveOpen,
+    setReceiveOpen,
+  ] = useState(false);
+
+  const [
+    adjustmentOpen,
+    setAdjustmentOpen,
+  ] = useState(false);
 
   const buttonStyle =
     `
@@ -31,7 +39,6 @@ export default function InventoryActionsCard({
     `;
 
   return (
-
     <>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -54,6 +61,9 @@ export default function InventoryActionsCard({
           </button>
 
           <button
+            onClick={() =>
+              setAdjustmentOpen(true)
+            }
             className={buttonStyle}
           >
             ➕ Stock Adjustment
@@ -62,7 +72,7 @@ export default function InventoryActionsCard({
           <button
             className={buttonStyle}
           >
-            ⚠ Damage / Loss
+            ⚠️ Damage / Loss
           </button>
 
           <button
@@ -89,8 +99,15 @@ export default function InventoryActionsCard({
         }
       />
 
-    </>
+      <StockAdjustmentModal
+        variantId={variantId}
+        open={adjustmentOpen}
+        onClose={() =>
+          setAdjustmentOpen(false)
+        }
+      />
 
+    </>
   );
 
 }
