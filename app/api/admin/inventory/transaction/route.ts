@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import {
   receiveShipment,
   adjustStock,
+  recordDamage,
+  countInventory,
 } from "@/lib/inventory/transaction";
 
 export async function POST(
@@ -69,6 +71,66 @@ export async function POST(
             body.quantity,
 
             body.reason,
+
+            body.notes
+
+          );
+
+        return NextResponse.json({
+
+          success: true,
+
+          operation,
+
+          ...result,
+
+        });
+
+      }
+
+      /* ===========================================
+         DAMAGE / LOSS
+      =========================================== */
+
+      case "damage": {
+
+        const result =
+          await recordDamage(
+
+            variantId,
+
+            body.quantity,
+
+            body.reason,
+
+            body.notes
+
+          );
+
+        return NextResponse.json({
+
+          success: true,
+
+          operation,
+
+          ...result,
+
+        });
+
+      }
+
+      /* ===========================================
+         INVENTORY COUNT
+      =========================================== */
+
+      case "inventory_count": {
+
+        const result =
+          await countInventory(
+
+            variantId,
+
+            body.actualQuantity,
 
             body.notes
 

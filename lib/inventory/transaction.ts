@@ -59,6 +59,7 @@ async function changeInventory(
     newQuantity,
     quantityChange,
   };
+
 }
 
 /* ===========================================================
@@ -80,28 +81,20 @@ export async function receiveShipment(
   }
 
   return changeInventory(
-
     variantId,
-
     quantity,
-
     "shipment",
-
     [
       supplier
         ? `Supplier: ${supplier}`
         : null,
-
       reference
         ? `Reference: ${reference}`
         : null,
-
       notes || null,
-
     ]
       .filter(Boolean)
       .join(" | ")
-
   );
 
 }
@@ -127,23 +120,115 @@ export async function adjustStock(
   }
 
   const quantityChange =
-    adjustmentType === "increase"
+    adjustmentType ===
+    "increase"
       ? quantity
       : -quantity;
+
+  return changeInventory(
+    variantId,
+    quantityChange,
+    "adjustment",
+    [
+      `Reason: ${reason}`,
+      notes || null,
+    ]
+      .filter(Boolean)
+      .join(" | ")
+  );
+
+}
+
+/* ===========================================================
+   DAMAGE / LOSS
+=========================================================== */
+
+export async function recordDamage(
+  variantId: string,
+  quantity: number,
+  reason:
+    | "Damaged"
+    | "Lost"
+    | "Expired"
+    | "Returned Unsellable"
+    | "Other",
+  notes?: string
+) {
+
+  if (quantity <= 0) {
+    throw new Error(
+      "Quantity must be greater than zero."
+    );
+  }
+
+  return changeInventory(
+    variantId,
+    -quantity,
+    "damage",
+    [
+      `Reason: ${reason}`,
+      notes || null,
+    ]
+      .filter(Boolean)
+      .join(" | ")
+  );
+
+}
+
+/* ===========================================================
+   INVENTORY COUNT
+=========================================================== */
+
+export async function countInventory(
+  variantId: string,
+  actualQuantity: number,
+  notes?: string
+) {
+
+  if (actualQuantity < 0) {
+    throw new Error(
+      "Actual quantity cannot be negative."
+    );
+  }
+
+  const inventory =
+    await getInventoryByVariant(
+      variantId
+    );
+
+  if (!inventory) {
+    throw new Error(
+      "Inventory not found."
+    );
+  }
+
+  const difference =
+    actualQuantity -
+    inventory.quantity;
+
+  if (difference === 0) {
+
+    return {
+      previousQuantity:
+        inventory.quantity,
+      newQuantity:
+        inventory.quantity,
+      quantityChange: 0,
+    };
+
+  }
 
   return changeInventory(
 
     variantId,
 
-    quantityChange,
+    difference,
 
-    "adjustment",
+    "inventory_count",
 
     [
-      `Reason: ${reason}`,
-
+      `Physical Count: ${actualQuantity}`,
       notes || null,
-
     ]
       .filter(Boolean)
       .join(" | ")
