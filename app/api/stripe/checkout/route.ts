@@ -1,3 +1,4 @@
+import { getInventoryByVariant } from "@/lib/inventory/service";
 import {
   getExistingCart,
 } from "@/lib/cart/service";
@@ -75,9 +76,57 @@ if (!shoppingCart) {
           item.quantity,
 
       }));
+      for (const item of cart.items) {
+
+  const inventory =
+    await getInventoryByVariant(
+      item.variant_id
+    );
+    console.log(
+  "Inventory check:",
+  {
+    variant: item.variant_id,
+    available: inventory.quantity,
+    requested: item.quantity,
+  }
+);
+
+  if (!inventory) {
+
+    return NextResponse.json(
+      {
+        error:
+          "Inventory record not found.",
+      },
+      {
+        status: 400,
+      }
+    );
+
+  }
+
+  if (
+    inventory.quantity <
+    item.quantity
+  ) {
+
+    return NextResponse.json(
+      {
+        error:
+          `Only ${inventory.quantity} item(s) left in stock for ${item.product_name}.`,
+      },
+      {
+        status: 400,
+      }
+    );
+
+  }
+
+}
 
     const session =
       await stripe.checkout.sessions.create({
+        
 
         mode: "payment",
         customer_creation: "always",

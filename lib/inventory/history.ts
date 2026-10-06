@@ -1,10 +1,15 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-type InventoryAction =
-  | "increase"
-  | "decrease"
+export type InventoryAction =
   | "shipment"
-  | "adjustment";
+  | "purchase"
+  | "sale"
+  | "adjustment"
+  | "damage"
+  | "inventory_count"
+  | "return"
+  | "reservation"
+  | "release";
 
 export async function createInventoryHistory(
   variantId: string,

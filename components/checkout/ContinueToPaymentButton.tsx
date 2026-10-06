@@ -3,11 +3,14 @@
 import { useState } from "react";
 
 export default function ContinueToPaymentButton() {
+
   const [loading, setLoading] =
     useState(false);
 
   async function handleCheckout() {
+
     try {
+
       setLoading(true);
 
       const response =
@@ -18,9 +21,25 @@ export default function ContinueToPaymentButton() {
           }
         );
 
-   const data = await response.json();
+      const data =
+        await response.json();
 
-   window.location.href = data.url;
+      if (!response.ok) {
+
+        alert(
+          data.error ??
+          "Unable to start checkout."
+        );
+
+        setLoading(false);
+
+        return;
+
+      }
+
+      window.location.href =
+        data.url;
+
     } catch (error) {
 
       console.error(error);
@@ -30,10 +49,13 @@ export default function ContinueToPaymentButton() {
       );
 
       setLoading(false);
+
     }
+
   }
 
   return (
+
     <button
       onClick={handleCheckout}
       disabled={loading}
@@ -54,5 +76,7 @@ export default function ContinueToPaymentButton() {
         ? "Redirecting..."
         : "Continue to Payment"}
     </button>
+
   );
+
 }
