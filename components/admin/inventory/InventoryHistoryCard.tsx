@@ -7,196 +7,168 @@ type InventoryHistoryCardProps = {
 export default function InventoryHistoryCard({
   history,
 }: InventoryHistoryCardProps) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
 
-      <div className="mb-6 flex items-center justify-between">
-
-        <div>
-
-          <h2 className="text-lg font-semibold">
-            Inventory History
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Complete audit trail for this inventory item.
-          </p>
-
-        </div>
-
-        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium">
-          {history.length} Transactions
-        </span>
-
+  if (history.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-gray-300 bg-white py-12 text-center text-gray-500">
+        No inventory history found.
       </div>
+    );
+  }
 
-      {history.length === 0 ? (
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
-        <div className="rounded-lg border border-dashed border-gray-300 py-12 text-center text-gray-500">
+      <div className="overflow-x-auto">
 
-          No inventory history found.
+        <table className="min-w-full border-collapse">
 
-        </div>
+          <thead className="bg-gray-50">
 
-      ) : (
+            <tr>
 
-        <div className="overflow-x-auto">
+              <th className="px-4 py-3 text-left text-sm font-semibold">
+                Date
+              </th>
 
-          <table className="min-w-full border-collapse">
+              <th className="px-4 py-3 text-left text-sm font-semibold">
+                Action
+              </th>
 
-            <thead>
+              <th className="px-4 py-3 text-right text-sm font-semibold">
+                Change
+              </th>
 
-              <tr className="border-b">
+              <th className="px-4 py-3 text-right text-sm font-semibold">
+                Stock After
+              </th>
 
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Date
-                </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">
+                Notes
+              </th>
 
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Action
-                </th>
+            </tr>
 
-                <th className="px-4 py-3 text-right text-sm font-semibold">
-                  Change
-                </th>
+          </thead>
 
-                <th className="px-4 py-3 text-right text-sm font-semibold">
-                  Stock After
-                </th>
+          <tbody>
 
-                <th className="px-4 py-3 text-left text-sm font-semibold">
-                  Notes
-                </th>
+            {history.map((item) => {
 
-              </tr>
+              const badgeColor = (() => {
 
-            </thead>
+                switch (item.action) {
 
-            <tbody>
+                  case "shipment":
+                    return "bg-green-100 text-green-700";
 
-              {history.map((item) => {
+                  case "adjustment":
+                    return "bg-blue-100 text-blue-700";
 
-                const isPositive =
-                  item.quantity_change > 0;
+                  case "damage":
+                    return "bg-red-100 text-red-700";
 
-                const badgeColor = (() => {
+                  case "inventory_count":
+                    return "bg-purple-100 text-purple-700";
 
-                  switch (item.action) {
+                  case "sale":
+                    return "bg-orange-100 text-orange-700";
 
-                    case "shipment":
-                      return "bg-green-100 text-green-700";
+                  case "return":
+                    return "bg-emerald-100 text-emerald-700";
 
-                    case "adjustment":
-                      return "bg-blue-100 text-blue-700";
+                  default:
+                    return "bg-gray-100 text-gray-700";
 
-                    case "damage":
-                      return "bg-red-100 text-red-700";
+                }
 
-                    case "inventory_count":
-                      return "bg-purple-100 text-purple-700";
+              })();
 
-                    case "sale":
-                      return "bg-orange-100 text-orange-700";
+              return (
 
-                    case "return":
-                      return "bg-emerald-100 text-emerald-700";
+                <tr
+                  key={item.id}
+                  className="border-t hover:bg-gray-50"
+                >
 
-                    default:
-                      return "bg-gray-100 text-gray-700";
+                  <td className="whitespace-nowrap px-4 py-3">
 
-                  }
+                    {new Date(
+                      item.created_at
+                    ).toLocaleString()}
 
-                })();
+                  </td>
 
-                return (
+                  <td className="px-4 py-3">
 
-                  <tr
-                    key={item.id}
-                    className="border-b last:border-0 hover:bg-gray-50"
-                  >
-
-                    <td className="px-4 py-3 whitespace-nowrap">
-
-                      {new Date(
-                        item.created_at
-                      ).toLocaleString()}
-
-                    </td>
-
-                    <td className="px-4 py-3">
-
-                      <span
-                        className={`
-                          rounded-full
-                          px-3
-                          py-1
-                          text-xs
-                          font-medium
-                          ${badgeColor}
-                        `}
-                      >
-
-                        {item.action
-                          .replaceAll(
-                            "_",
-                            " "
-                          )
-                          .replace(
-                            /\b\w/g,
-                            (letter) =>
-                              letter.toUpperCase()
-                          )}
-
-                      </span>
-
-                    </td>
-
-                    <td
+                    <span
                       className={`
-                        px-4
-                        py-3
-                        text-right
-                        font-semibold
-                        ${
-                          isPositive
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }
+                        rounded-full
+                        px-3
+                        py-1
+                        text-xs
+                        font-medium
+                        ${badgeColor}
                       `}
                     >
 
-                      {isPositive
-                        ? `+${item.quantity_change}`
-                        : item.quantity_change}
+                      {item.action
+                        .replaceAll("_", " ")
+                        .replace(
+                          /\b\w/g,
+                          (letter) =>
+                            letter.toUpperCase()
+                        )}
 
-                    </td>
+                    </span>
 
-                    <td className="px-4 py-3 text-right font-medium">
+                  </td>
 
-                      {item.stock_after}
+                  <td
+                    className={`
+                      px-4
+                      py-3
+                      text-right
+                      font-semibold
+                      ${
+                        item.quantity_change >= 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }
+                    `}
+                  >
 
-                    </td>
+                    {item.quantity_change >= 0
+                      ? `+${item.quantity_change}`
+                      : item.quantity_change}
 
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                  </td>
 
-                      {item.notes || "-"}
+                  <td className="px-4 py-3 text-right font-medium">
 
-                    </td>
+                    {item.stock_after}
 
-                  </tr>
+                  </td>
 
-                );
+                  <td className="px-4 py-3 text-sm text-gray-600">
 
-              })}
+                    {item.notes || "-"}
 
-            </tbody>
+                  </td>
 
-          </table>
+                </tr>
 
-        </div>
+              );
 
-      )}
+            })}
+
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
   );
+
 }

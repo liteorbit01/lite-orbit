@@ -6,15 +6,28 @@ import ReceiveShipmentModal from "./ReceiveShipmentModal";
 import StockAdjustmentModal from "./StockAdjustmentModal";
 import DamageLossModal from "./DamageLossModal";
 import InventoryCountModal from "./InventoryCountModal";
+import InventoryHistoryDrawer from "./InventoryHistoryDrawer";
+
+import {
+  InventoryHistoryItem,
+} from "@/lib/inventory/getInventoryHistory";
+
+import {
+  InventorySummary,
+} from "@/lib/inventory/getInventorySummary";
 
 type InventoryActionsCardProps = {
   variantId: string;
   currentStock: number;
+  history: InventoryHistoryItem[];
+  summary: InventorySummary;
 };
 
 export default function InventoryActionsCard({
   variantId,
   currentStock,
+  history,
+  summary,
 }: InventoryActionsCardProps) {
 
   const [
@@ -35,6 +48,11 @@ export default function InventoryActionsCard({
   const [
     inventoryCountOpen,
     setInventoryCountOpen,
+  ] = useState(false);
+
+  const [
+    historyOpen,
+    setHistoryOpen,
   ] = useState(false);
 
   const buttonStyle = `
@@ -98,10 +116,15 @@ export default function InventoryActionsCard({
             📋 Inventory Count
           </button>
 
+          <hr className="my-4" />
+
           <button
+            onClick={() =>
+              setHistoryOpen(true)
+            }
             className={buttonStyle}
           >
-            🕒 Inventory History
+            🕒 View History
           </button>
 
         </div>
@@ -139,6 +162,15 @@ export default function InventoryActionsCard({
         onClose={() =>
           setInventoryCountOpen(false)
         }
+      />
+
+      <InventoryHistoryDrawer
+        open={historyOpen}
+        onClose={() =>
+          setHistoryOpen(false)
+        }
+        history={history}
+        summary={summary}
       />
 
     </>
