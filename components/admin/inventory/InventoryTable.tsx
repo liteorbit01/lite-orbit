@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import InventoryStatusBadge from "./InventoryStatusBadge";
+
 type InventoryRow = {
   id: string;
 
@@ -31,7 +33,9 @@ type InventoryTableProps = {
 export default function InventoryTable({
   inventory,
 }: InventoryTableProps) {
+
   return (
+
     <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
 
       <table className="min-w-full">
@@ -65,6 +69,10 @@ export default function InventoryTable({
             </th>
 
             <th className="px-6 py-4 text-center">
+              Threshold
+            </th>
+
+            <th className="px-6 py-4 text-center">
               Action
             </th>
 
@@ -80,33 +88,6 @@ export default function InventoryTable({
               item.quantity -
               item.reserved_quantity;
 
-            let badgeClasses =
-              "bg-green-100 text-green-700";
-
-            let status =
-              "In Stock";
-
-            if (available === 0) {
-
-              badgeClasses =
-                "bg-red-100 text-red-700";
-
-              status =
-                "Out of Stock";
-
-            } else if (
-              available <=
-              item.low_stock_threshold
-            ) {
-
-              badgeClasses =
-                "bg-yellow-100 text-yellow-700";
-
-              status =
-                "Low Stock";
-
-            }
-
             return (
 
               <tr
@@ -115,32 +96,57 @@ export default function InventoryTable({
               >
 
                 <td className="px-6 py-4 font-medium">
+
                   {item.product_variants.products.name}
+
                 </td>
 
                 <td className="px-6 py-4 text-gray-600">
+
                   {item.product_variants.sku}
+
                 </td>
 
                 <td className="px-6 py-4 text-center">
+
                   {item.quantity}
+
                 </td>
 
                 <td className="px-6 py-4 text-center">
+
                   {item.reserved_quantity}
+
                 </td>
 
                 <td className="px-6 py-4 text-center font-semibold">
+
                   {available}
+
                 </td>
 
                 <td className="px-6 py-4 text-center">
 
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${badgeClasses}`}
-                  >
-                    {status}
-                  </span>
+                  <InventoryStatusBadge
+                    quantity={
+                      item.quantity
+                    }
+                    reservedQuantity={
+                      item.reserved_quantity
+                    }
+                    lowStockThreshold={
+                      item.low_stock_threshold
+                    }
+                    allowBackorder={
+                      item.allow_backorder
+                    }
+                  />
+
+                </td>
+
+                <td className="px-6 py-4 text-center">
+
+                  {item.low_stock_threshold}
 
                 </td>
 
@@ -161,7 +167,9 @@ export default function InventoryTable({
                       hover:bg-gray-100
                     "
                   >
+
                     Manage
+
                   </Link>
 
                 </td>
@@ -177,5 +185,7 @@ export default function InventoryTable({
       </table>
 
     </div>
+
   );
+
 }

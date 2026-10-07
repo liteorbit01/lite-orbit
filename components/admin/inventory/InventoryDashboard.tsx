@@ -3,8 +3,17 @@
 import { useMemo, useState } from "react";
 
 import InventorySearch from "./InventorySearch";
-import InventorySummary from "./InventorySummary";
 import InventoryTable from "./InventoryTable";
+import InventorySummaryCards from "./InventorySummaryCards";
+import LowStockAlerts from "./LowStockAlerts";
+
+import {
+  buildInventorySummary,
+} from "@/lib/inventory/summary";
+
+import {
+  buildLowStockAlerts,
+} from "@/lib/inventory/alerts";
 
 type InventoryItem = {
   id: string;
@@ -74,70 +83,71 @@ export default function InventoryDashboard({
         }
       );
 
-    }, [inventory, search]);
+    }, [
+      inventory,
+      search,
+    ]);
 
-  const totalProducts =
-    filteredInventory.length;
-
-  const totalUnits =
-    filteredInventory.reduce(
-      (sum, item) =>
-        sum + item.quantity,
-      0
+  const summary =
+    useMemo(
+      () =>
+        buildInventorySummary(
+          filteredInventory
+        ),
+      [filteredInventory]
     );
 
-  const lowStock =
-    filteredInventory.filter(
-      (item) => {
-
-        const available =
-          item.quantity -
-          item.reserved_quantity;
-
-        return (
-          available > 0 &&
-          available <=
-          item.low_stock_threshold
-        );
-
-      }
-    ).length;
-
-  const outOfStock =
-    filteredInventory.filter(
-      (item) =>
-        item.quantity === 0
-    ).length;
+  const alerts =
+    useMemo(
+      () =>
+        buildLowStockAlerts(
+          filteredInventory
+        ),
+      [filteredInventory]
+    );
 
   return (
 
     <>
 
-      <InventorySummary
-        totalProducts={
-          totalProducts
-        }
-        totalUnits={
-          totalUnits
-        }
-        lowStock={
-          lowStock
-        }
-        outOfStock={
-          outOfStock
-        }
+      {/* Dashboard Summary */}
+
+      <InventorySummaryCards
+        summary={summary}
       />
 
-      <InventorySearch
-        value={search}
-        onChange={setSearch}
-      />
+      {/* Low Stock Alerts */}
 
-      <InventoryTable
-        inventory={
-          filteredInventory
-        }
-      />
+      <div className="mt-8">
+
+        <LowStockAlerts
+          alerts={alerts}
+        />
+
+      </div>
+
+      {/* Search */}
+
+      <div className="mt-8">
+
+        <InventorySearch
+          value={search}
+          onChange={setSearch}
+        />
+
+      </div>
+
+      {/* Inventory Table */}
+
+      <div className="mt-8">
+
+        <InventoryTable
+          inventory={
+            filteredInventory
+          }
+        />
+
+      </div>
 
     </>
 
