@@ -1,26 +1,66 @@
-import {
+"use client";
+
+import { memo } from "react";
+
+import type {
   InventorySummary,
-} from "@/lib/inventory/summary";
+  InventoryStatusFilter,
+} from "@/types/inventory";
 
 type InventorySummaryCardsProps = {
   summary: InventorySummary;
+
+  selectedStatus: InventoryStatusFilter;
+
+  onStatusSelect: (
+    status: InventoryStatusFilter
+  ) => void;
 };
 
 type SummaryCardProps = {
   title: string;
+
   value: number;
+
   color: string;
+
+  status: InventoryStatusFilter;
+
+  selected: boolean;
+
+  onClick: () => void;
 };
 
-function SummaryCard({
+const SummaryCard = memo(function SummaryCard({
   title,
   value,
   color,
+  selected,
+  onClick,
 }: SummaryCardProps) {
 
   return (
 
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`
+        w-full
+        rounded-xl
+        border
+        bg-white
+        p-5
+        text-left
+        shadow-sm
+        transition-all
+
+        ${
+          selected
+            ? "border-blue-600 ring-2 ring-blue-200"
+            : "border-gray-200 hover:border-blue-300 hover:shadow-md"
+        }
+      `}
+    >
 
       <div
         className={`
@@ -33,7 +73,9 @@ function SummaryCard({
           ${color}
         `}
       >
+
         {title}
+
       </div>
 
       <div className="mt-4 text-3xl font-bold">
@@ -42,14 +84,16 @@ function SummaryCard({
 
       </div>
 
-    </div>
+    </button>
 
   );
 
-}
+});
 
-export default function InventorySummaryCards({
+function InventorySummaryCards({
   summary,
+  selectedStatus,
+  onStatusSelect,
 }: InventorySummaryCardsProps) {
 
   return (
@@ -60,30 +104,77 @@ export default function InventorySummaryCards({
         title="Products"
         value={summary.totalProducts}
         color="bg-gray-100 text-gray-700"
+        status="all"
+        selected={
+          selectedStatus === "all"
+        }
+        onClick={() =>
+          onStatusSelect("all")
+        }
       />
 
       <SummaryCard
         title="In Stock"
         value={summary.inStock}
         color="bg-green-100 text-green-700"
+        status="in_stock"
+        selected={
+          selectedStatus ===
+          "in_stock"
+        }
+        onClick={() =>
+          onStatusSelect(
+            "in_stock"
+          )
+        }
       />
 
       <SummaryCard
         title="Low Stock"
         value={summary.lowStock}
         color="bg-yellow-100 text-yellow-700"
+        status="low_stock"
+        selected={
+          selectedStatus ===
+          "low_stock"
+        }
+        onClick={() =>
+          onStatusSelect(
+            "low_stock"
+          )
+        }
       />
 
       <SummaryCard
         title="Out of Stock"
         value={summary.outOfStock}
         color="bg-red-100 text-red-700"
+        status="out_of_stock"
+        selected={
+          selectedStatus ===
+          "out_of_stock"
+        }
+        onClick={() =>
+          onStatusSelect(
+            "out_of_stock"
+          )
+        }
       />
 
       <SummaryCard
         title="Backordered"
         value={summary.backordered}
         color="bg-purple-100 text-purple-700"
+        status="backordered"
+        selected={
+          selectedStatus ===
+          "backordered"
+        }
+        onClick={() =>
+          onStatusSelect(
+            "backordered"
+          )
+        }
       />
 
     </div>
@@ -91,3 +182,7 @@ export default function InventorySummaryCards({
   );
 
 }
+
+export default memo(
+  InventorySummaryCards
+);

@@ -1,3 +1,7 @@
+"use client";
+
+import { memo } from "react";
+
 import Link from "next/link";
 
 import {
@@ -10,7 +14,138 @@ type LowStockAlertsProps = {
   alerts: LowStockAlert[];
 };
 
-export default function LowStockAlerts({
+const AlertRow = memo(function AlertRow({
+  alert,
+}: {
+  alert: LowStockAlert;
+}) {
+
+  return (
+
+    <div
+      className="flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between"
+    >
+
+      <div className="flex-1">
+
+        <div className="flex items-center gap-3">
+
+          <h3 className="font-semibold">
+
+            {alert.productName}
+
+          </h3>
+
+          <InventoryStatusBadge
+            quantity={alert.quantity}
+            reservedQuantity={
+              alert.reservedQuantity
+            }
+            lowStockThreshold={
+              alert.lowStockThreshold
+            }
+            allowBackorder={
+              alert.allowBackorder
+            }
+          />
+
+        </div>
+
+        <div className="mt-2 text-sm text-gray-500">
+
+          SKU{" "}
+
+          <span className="font-medium">
+
+            {alert.sku}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div className="flex gap-8 text-center">
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Available
+
+          </div>
+
+          <div className="mt-1 text-xl font-bold">
+
+            {alert.availableQuantity}
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Threshold
+
+          </div>
+
+          <div className="mt-1 text-xl font-bold">
+
+            {alert.lowStockThreshold}
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Reorder
+
+          </div>
+
+          <div className="mt-1 text-xl font-bold">
+
+            {alert.reorderQuantity}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <Link
+        href={`/admin/inventory/${alert.variantId}`}
+        className="
+          inline-flex
+          items-center
+          justify-center
+          rounded-lg
+          border
+          border-gray-300
+          px-5
+          py-2
+          text-sm
+          font-medium
+          transition
+          hover:bg-gray-100
+        "
+      >
+
+        Manage
+
+      </Link>
+
+    </div>
+
+  );
+
+});
+
+function LowStockAlerts({
   alerts,
 }: LowStockAlertsProps) {
 
@@ -74,119 +209,10 @@ export default function LowStockAlerts({
 
           {alerts.map((alert) => (
 
-            <div
+            <AlertRow
               key={alert.id}
-              className="flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between"
-            >
-
-              <div className="flex-1">
-
-                <div className="flex items-center gap-3">
-
-                  <h3 className="font-semibold">
-
-                    {alert.productName}
-
-                  </h3>
-
-                  <InventoryStatusBadge
-                    quantity={alert.quantity}
-                    reservedQuantity={alert.reservedQuantity}
-                    lowStockThreshold={alert.lowStockThreshold}
-                    allowBackorder={alert.allowBackorder}
-                  />
-
-                </div>
-
-                <div className="mt-2 text-sm text-gray-500">
-
-                  SKU:{" "}
-
-                  <span className="font-medium">
-
-                    {alert.sku}
-
-                  </span>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-8 text-center">
-
-                <div>
-
-                  <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                    Available
-
-                  </div>
-
-                  <div className="mt-1 text-xl font-bold">
-
-                    {alert.availableQuantity}
-
-                  </div>
-
-                </div>
-
-                <div>
-
-                  <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                    Threshold
-
-                  </div>
-
-                  <div className="mt-1 text-xl font-bold">
-
-                    {alert.lowStockThreshold}
-
-                  </div>
-
-                </div>
-
-                <div>
-
-                  <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                    Reorder
-
-                  </div>
-
-                  <div className="mt-1 text-xl font-bold">
-
-                    {alert.reorderQuantity}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <Link
-                href={`/admin/inventory/${alert.variantId}`}
-                className="
-                  inline-flex
-                  items-center
-                  justify-center
-                  rounded-lg
-                  border
-                  border-gray-300
-                  px-5
-                  py-2
-                  text-sm
-                  font-medium
-                  transition
-                  hover:bg-gray-100
-                "
-              >
-
-                Manage
-
-              </Link>
-
-            </div>
+              alert={alert}
+            />
 
           ))}
 
@@ -199,3 +225,7 @@ export default function LowStockAlerts({
   );
 
 }
+
+export default memo(
+  LowStockAlerts
+);

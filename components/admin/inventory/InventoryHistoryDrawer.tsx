@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -55,14 +56,94 @@ export default function InventoryHistoryDrawer({
     setRowsPerPage,
   ] = useState(20);
 
+  /* =======================================================
+     Event Handlers
+  ======================================================= */
+
+  const handleSearchChange =
+    useCallback(
+
+      (
+        value: string
+      ) => {
+
+        setSearch(value);
+
+        setCurrentPage(1);
+
+      },
+
+      []
+
+    );
+
+  const handleActionFilterChange =
+    useCallback(
+
+      (
+        value: string
+      ) => {
+
+        setActionFilter(value);
+
+        setCurrentPage(1);
+
+      },
+
+      []
+
+    );
+
+  const handleDateFilterChange =
+    useCallback(
+
+      (
+        value: string
+      ) => {
+
+        setDateFilter(value);
+
+        setCurrentPage(1);
+
+      },
+
+      []
+
+    );
+
+  const handleRowsPerPageChange =
+    useCallback(
+
+      (
+        value: number
+      ) => {
+
+        setRowsPerPage(value);
+
+        setCurrentPage(1);
+
+      },
+
+      []
+
+    );
+
+  /* =======================================================
+     Escape Key
+  ======================================================= */
+
   useEffect(() => {
 
     function handleEscape(
       event: KeyboardEvent
     ) {
 
-      if (event.key === "Escape") {
+      if (
+        event.key === "Escape"
+      ) {
+
         onClose();
+
       }
 
     }
@@ -86,20 +167,16 @@ export default function InventoryHistoryDrawer({
     };
 
   }, [
+
     open,
+
     onClose,
+
   ]);
 
-  useEffect(() => {
-
-    setCurrentPage(1);
-
-  }, [
-    search,
-    actionFilter,
-    dateFilter,
-    rowsPerPage,
-  ]);
+  /* =======================================================
+     Filtering
+  ======================================================= */
 
   const filteredHistory =
     useMemo(() => {
@@ -216,11 +293,19 @@ export default function InventoryHistoryDrawer({
       );
 
     }, [
+
       history,
+
       search,
+
       actionFilter,
+
       dateFilter,
+
     ]);
+      /* =======================================================
+     Pagination
+  ======================================================= */
 
   const totalPages =
     Math.max(
@@ -231,8 +316,14 @@ export default function InventoryHistoryDrawer({
       )
     );
 
+  const currentSafePage =
+    Math.min(
+      currentPage,
+      totalPages
+    );
+
   const startIndex =
-    (currentPage - 1) *
+    (currentSafePage - 1) *
     rowsPerPage;
 
   const endIndex =
@@ -315,6 +406,7 @@ export default function InventoryHistoryDrawer({
                 hover:bg-gray-100
               "
             >
+
               ✕
 
             </button>
@@ -331,8 +423,7 @@ export default function InventoryHistoryDrawer({
             summary={summary}
           />
 
-          {/* ===== Toolbar starts here ===== */}
-                    {/* ===== Toolbar starts here ===== */}
+          {/* Toolbar */}
 
           <div className="mb-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
 
@@ -343,14 +434,16 @@ export default function InventoryHistoryDrawer({
               <div>
 
                 <label className="mb-2 block text-sm font-medium">
+
                   Search
+
                 </label>
 
                 <input
                   type="text"
                   value={search}
                   onChange={(e) =>
-                    setSearch(
+                    handleSearchChange(
                       e.target.value
                     )
                   }
@@ -369,18 +462,20 @@ export default function InventoryHistoryDrawer({
 
               </div>
 
-              {/* Action Filter */}
+              {/* Action */}
 
               <div>
 
                 <label className="mb-2 block text-sm font-medium">
+
                   Action
+
                 </label>
 
                 <select
                   value={actionFilter}
                   onChange={(e) =>
-                    setActionFilter(
+                    handleActionFilterChange(
                       e.target.value
                     )
                   }
@@ -398,49 +493,65 @@ export default function InventoryHistoryDrawer({
                 >
 
                   <option value="all">
+
                     All Actions
+
                   </option>
 
                   <option value="shipment">
+
                     Shipment
+
                   </option>
 
                   <option value="adjustment">
+
                     Adjustment
+
                   </option>
 
                   <option value="damage">
+
                     Damage / Loss
+
                   </option>
 
                   <option value="inventory_count">
+
                     Inventory Count
+
                   </option>
 
                   <option value="sale">
+
                     Sale
+
                   </option>
 
                   <option value="return">
+
                     Return
+
                   </option>
 
                 </select>
 
               </div>
 
-              {/* Date Range */}
+              {/* Date */}
 
               <div>
 
                 <label className="mb-2 block text-sm font-medium">
+
                   Date Range
+
                 </label>
 
                 <select
                   value={dateFilter}
                   onChange={(e) =>
-                    setDateFilter(
+                    handleDateFilterChange(
                       e.target.value
                     )
                   }
@@ -458,23 +569,33 @@ export default function InventoryHistoryDrawer({
                 >
 
                   <option value="all">
+
                     All Time
+
                   </option>
 
                   <option value="today">
+
                     Today
+
                   </option>
 
                   <option value="7">
+
                     Last 7 Days
+
                   </option>
 
                   <option value="30">
+
                     Last 30 Days
+
                   </option>
 
                   <option value="month">
+
                     This Month
+
                   </option>
 
                 </select>
@@ -506,8 +627,7 @@ export default function InventoryHistoryDrawer({
             </div>
 
           </div>
-
-          {/* History Table */}
+                    {/* History Table */}
 
           <InventoryHistoryCard
             history={
@@ -559,13 +679,15 @@ export default function InventoryHistoryDrawer({
               <div className="flex items-center gap-2">
 
                 <span className="text-sm">
+
                   Rows
+
                 </span>
 
                 <select
                   value={rowsPerPage}
                   onChange={(e) =>
-                    setRowsPerPage(
+                    handleRowsPerPageChange(
                       Number(
                         e.target.value
                       )
@@ -575,19 +697,27 @@ export default function InventoryHistoryDrawer({
                 >
 
                   <option value={10}>
+
                     10
+
                   </option>
 
                   <option value={20}>
+
                     20
+
                   </option>
 
                   <option value={50}>
+
                     50
+
                   </option>
 
                   <option value={100}>
+
                     100
+
                   </option>
 
                 </select>
@@ -596,12 +726,15 @@ export default function InventoryHistoryDrawer({
 
               <button
                 disabled={
-                  currentPage === 1
+                  currentSafePage === 1
                 }
                 onClick={() =>
                   setCurrentPage(
                     (page) =>
-                      page - 1
+                      Math.max(
+                        1,
+                        page - 1
+                      )
                   )
                 }
                 className="
@@ -622,7 +755,7 @@ export default function InventoryHistoryDrawer({
 
                 Page{" "}
 
-                {currentPage}
+                {currentSafePage}
 
                 {" "}of{" "}
 
@@ -632,13 +765,16 @@ export default function InventoryHistoryDrawer({
 
               <button
                 disabled={
-                  currentPage ===
+                  currentSafePage >=
                   totalPages
                 }
                 onClick={() =>
                   setCurrentPage(
                     (page) =>
-                      page + 1
+                      Math.min(
+                        totalPages,
+                        page + 1
+                      )
                   )
                 }
                 className="

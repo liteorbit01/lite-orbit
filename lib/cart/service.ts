@@ -17,6 +17,28 @@ import {
   calculateCartSummary,
 } from "./calculations";
 
+/* =====================================================
+   Query Types
+===================================================== */
+
+type CartProductView = {
+  variant_id: string;
+  product_name: string;
+  sku: string;
+  slug: string;
+  image_url: string | null;
+  size: string | null;
+  color: string | null;
+  price: number;
+  stock_quantity: number;
+};
+
+type CartItemQueryResult = {
+  id: string;
+  quantity: number;
+  cart_products_view: CartProductView;
+};
+
 /**
  * Returns the current shopping cart if one exists.
  * Does not create a new cart.
@@ -32,7 +54,9 @@ export async function getExistingCart(): Promise<ShoppingCart | null> {
     )?.value;
 
   if (!sessionId) {
+
     return null;
+
   }
 
   const {
@@ -41,15 +65,24 @@ export async function getExistingCart(): Promise<ShoppingCart | null> {
   } = await supabaseAdmin
     .from("shopping_carts")
     .select("*")
-    .eq("session_id", sessionId)
-    .eq("status", "active")
+    .eq(
+      "session_id",
+      sessionId
+    )
+    .eq(
+      "status",
+      "active"
+    )
     .maybeSingle();
 
   if (error) {
+
     throw error;
+
   }
 
   return data;
+
 }
 
 export async function getExistingCartItems(): Promise<ShoppingCartResponse> {
@@ -92,30 +125,36 @@ export async function getExistingCartItems(): Promise<ShoppingCartResponse> {
         stock_quantity
       )
     `)
-    .eq("cart_id", cart.id);
+    .eq(
+      "cart_id",
+      cart.id
+    );
 
   if (error) {
+
     throw error;
+
   }
 
+  const typedCartItems =
+    (cartItems ?? []) as CartItemQueryResult[];
+
   const items: CartProduct[] =
-    (cartItems ?? []).map(
-      (item: any) => ({
+    typedCartItems.map((item) => ({
 
-        cart_item_id:
-          item.id,
+      cart_item_id:
+        item.id,
 
-        ...item.cart_products_view,
+      ...item.cart_products_view,
 
-        quantity:
-          item.quantity,
+      quantity:
+        item.quantity,
 
-        subtotal:
-          item.quantity *
-          item.cart_products_view.price,
+      subtotal:
+        item.quantity *
+        item.cart_products_view.price,
 
-      })
-    );
+    }));
 
   return {
 
@@ -129,7 +168,6 @@ export async function getExistingCartItems(): Promise<ShoppingCartResponse> {
   };
 
 }
-
 export async function getCartItemsByCartId(
   cartId: string
 ): Promise<ShoppingCartResponse> {
@@ -154,30 +192,36 @@ export async function getCartItemsByCartId(
         stock_quantity
       )
     `)
-    .eq("cart_id", cartId);
+    .eq(
+      "cart_id",
+      cartId
+    );
 
   if (error) {
+
     throw error;
+
   }
 
+  const typedCartItems =
+    (cartItems ?? []) as CartItemQueryResult[];
+
   const items: CartProduct[] =
-    (cartItems ?? []).map(
-      (item: any) => ({
+    typedCartItems.map((item) => ({
 
-        cart_item_id:
-          item.id,
+      cart_item_id:
+        item.id,
 
-        ...item.cart_products_view,
+      ...item.cart_products_view,
 
-        quantity:
-          item.quantity,
+      quantity:
+        item.quantity,
 
-        subtotal:
-          item.quantity *
-          item.cart_products_view.price,
+      subtotal:
+        item.quantity *
+        item.cart_products_view.price,
 
-      })
-    );
+    }));
 
   return {
 
@@ -191,6 +235,10 @@ export async function getCartItemsByCartId(
   };
 
 }
+
+// ======================================================
+// Clear Cart By Id
+// ======================================================
 
 export async function clearCartById(
   cartId: string
@@ -207,11 +255,16 @@ export async function clearCartById(
   } = await supabaseAdmin
     .from("shopping_cart_items")
     .delete()
-    .eq("cart_id", cartId)
+    .eq(
+      "cart_id",
+      cartId
+    )
     .select();
 
   if (error) {
+
     throw error;
+
   }
 
   console.log(
@@ -220,6 +273,10 @@ export async function clearCartById(
   );
 
 }
+
+// ======================================================
+// Complete Cart By Id
+// ======================================================
 
 export async function completeCartById(
   cartId: string
@@ -238,11 +295,16 @@ export async function completeCartById(
     .update({
       status: "converted",
     })
-    .eq("id", cartId)
+    .eq(
+      "id",
+      cartId
+    )
     .select();
 
   if (error) {
+
     throw error;
+
   }
 
   console.log(

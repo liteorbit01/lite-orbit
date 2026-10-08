@@ -1,11 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import InventorySearch from "./InventorySearch";
-import InventoryTable from "./InventoryTable";
 import InventorySummaryCards from "./InventorySummaryCards";
 import LowStockAlerts from "./LowStockAlerts";
+import ReorderSuggestions from "./ReorderSuggestions";
+import InventoryAnalytics from "./InventoryAnalytics";
+import InventoryTable from "./InventoryTable";
 
 import {
   buildInventorySummary,
@@ -15,29 +22,25 @@ import {
   buildLowStockAlerts,
 } from "@/lib/inventory/alerts";
 
-type InventoryItem = {
-  id: string;
+import {
+  buildReorderSuggestions,
+} from "@/lib/inventory/reorder";
 
-  quantity: number;
+import {
+  buildInventoryAnalytics,
+} from "@/lib/inventory/analytics";
 
-  reserved_quantity: number;
+import {
+  getInventoryStatusKey,
+} from "@/lib/inventory/utils";
 
-  low_stock_threshold: number;
+import type {
+  InventoryItem,
+  InventoryStatusFilter,
+} from "@/types/inventory";
 
-  reorder_quantity: number;
-
-  allow_backorder: boolean;
-
-  product_variants: {
-    id: string;
-
-    sku: string;
-
-    products: {
-      name: string;
-    };
-  };
-};
+const STORAGE_KEY =
+  "inventory-dashboard-preferences";
 
 type InventoryDashboardProps = {
   inventory: InventoryItem[];
@@ -48,7 +51,147 @@ export default function InventoryDashboard({
 }: InventoryDashboardProps) {
 
   const [search, setSearch] =
-    useState("");
+    useState(() => {
+
+      if (
+        typeof window === "undefined"
+      ) {
+
+        return "";
+
+      }
+
+      try {
+
+        const saved =
+          localStorage.getItem(
+            STORAGE_KEY
+          );
+
+        if (!saved) {
+
+          return "";
+
+        }
+
+        return JSON.parse(saved)
+          .search ?? "";
+
+      } catch {
+
+        return "";
+
+      }
+
+    });
+
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] =
+    useState<InventoryStatusFilter>(
+      () => {
+
+        if (
+          typeof window ===
+          "undefined"
+        ) {
+
+          return "all";
+
+        }
+
+        try {
+
+          const saved =
+            localStorage.getItem(
+              STORAGE_KEY
+            );
+
+          if (!saved) {
+
+            return "all";
+
+          }
+
+          return (
+            JSON.parse(saved)
+              .status ??
+            "all"
+          );
+
+        } catch {
+
+          return "all";
+
+        }
+
+      }
+    );
+
+  useEffect(() => {
+
+    localStorage.setItem(
+
+      STORAGE_KEY,
+
+      JSON.stringify({
+
+        search,
+
+        status:
+          statusFilter,
+
+      })
+
+    );
+
+  }, [
+
+    search,
+
+    statusFilter,
+
+  ]);
+
+  /* -------------------------------- */
+
+  const handleSearchChange =
+    useCallback(
+
+      (
+        value: string
+      ) => {
+
+        setSearch(
+          value
+        );
+
+      },
+
+      []
+
+    );
+
+  const handleStatusChange =
+    useCallback(
+
+      (
+        status:
+          InventoryStatusFilter
+      ) => {
+
+        setStatusFilter(
+          status
+        );
+
+      },
+
+      []
+
+    );
+
+  /* -------------------------------- */
 
   const filteredInventory =
     useMemo(() => {
@@ -57,10 +200,6 @@ export default function InventoryDashboard({
         search
           .trim()
           .toLowerCase();
-
-      if (!term) {
-        return inventory;
-      }
 
       return inventory.filter(
         (item) => {
@@ -75,27 +214,72 @@ export default function InventoryDashboard({
               .sku
               .toLowerCase();
 
-          return (
+          const matchesSearch =
+
+            !term ||
+
             product.includes(term) ||
-            sku.includes(term)
+
+            sku.includes(term);
+
+          const matchesStatus =
+
+            statusFilter ===
+              "all" ||
+
+            getInventoryStatusKey(
+
+              item.quantity,
+
+              item.reserved_quantity,
+
+              item.low_stock_threshold,
+
+              item.allow_backorder
+
+            ) ===
+              statusFilter;
+
+          return (
+
+            matchesSearch &&
+
+            matchesStatus
+
           );
 
         }
+
       );
 
     }, [
+
       inventory,
+
       search,
+
+      statusFilter,
+
     ]);
+
+  /*
+    Dashboard summary should always
+    represent the COMPLETE inventory.
+  */
 
   const summary =
     useMemo(
       () =>
         buildInventorySummary(
-          filteredInventory
+          inventory
         ),
-      [filteredInventory]
+      [inventory]
     );
+
+  /*
+    Everything below follows
+    the current filter.
+  */
 
   const alerts =
     useMemo(
@@ -106,50 +290,104 @@ export default function InventoryDashboard({
       [filteredInventory]
     );
 
-  return (
+  const suggestions =
+    useMemo(
+      () =>
+        buildReorderSuggestions(
+          filteredInventory
+        ),
+      [filteredInventory]
+    );
 
-    <>
+  const analytics =
+    useMemo(
+      () =>
+        buildInventoryAnalytics(
+          filteredInventory
+        ),
+      [filteredInventory]
+    );
+      return (
 
-      {/* Dashboard Summary */}
+    <div className="space-y-8">
+
+      {/* Summary */}
 
       <InventorySummaryCards
         summary={summary}
+        selectedStatus={
+          statusFilter
+        }
+        onStatusSelect={
+          handleStatusChange
+        }
       />
 
       {/* Low Stock Alerts */}
 
-      <div className="mt-8">
+      <LowStockAlerts
+        alerts={alerts}
+      />
 
-        <LowStockAlerts
-          alerts={alerts}
-        />
+      {/* Reorder Suggestions */}
 
-      </div>
+      <ReorderSuggestions
+        suggestions={
+          suggestions
+        }
+      />
 
-      {/* Search */}
+      {/* Analytics */}
 
-      <div className="mt-8">
+      <InventoryAnalytics
+        analytics={
+          analytics
+        }
+      />
+
+      {/* Sticky Toolbar */}
+
+      <div
+        className="
+          sticky
+          top-4
+          z-30
+          rounded-xl
+          bg-gray-50/95
+          backdrop-blur
+          py-4
+        "
+      >
 
         <InventorySearch
           value={search}
-          onChange={setSearch}
+          onChange={
+            handleSearchChange
+          }
         />
+
+        {/*
+          Future filters:
+
+          • Status
+          • Warehouse
+          • Supplier
+          • Category
+          • Stock Level
+          • Export
+        */}
 
       </div>
 
       {/* Inventory Table */}
 
-      <div className="mt-8">
+      <InventoryTable
+        inventory={
+          filteredInventory
+        }
+      />
 
-        <InventoryTable
-          inventory={
-            filteredInventory
-          }
-        />
-
-      </div>
-
-    </>
+    </div>
 
   );
 

@@ -1,31 +1,18 @@
-export type ShoppingCart = {
-  id: string;
-  user_id: string | null;
-  session_id: string | null;
+import type { Database } from "@/types/database.types";
 
-  status:
-    | "active"
-    | "converted"
-    | "abandoned";
+/* =====================================================
+   Database Types
+===================================================== */
 
-  created_at: string;
-  updated_at: string;
-};
+export type ShoppingCart =
+  Database["public"]["Tables"]["shopping_carts"]["Row"];
 
-export type ShoppingCartItem = {
-  id: string;
+export type ShoppingCartItem =
+  Database["public"]["Tables"]["shopping_cart_items"]["Row"];
 
-  cart_id: string;
-
-  variant_id: string;
-
-  quantity: number;
-
-  price_at_addition: number;
-
-  created_at: string;
-  updated_at: string;
-};
+/* =====================================================
+   Application Types
+===================================================== */
 
 export type CartProduct = {
   cart_item_id: string;
@@ -58,11 +45,13 @@ export type CartSummary = {
 
   itemCount: number;
 };
+
 export type AddToCartResult = {
   success: boolean;
 
   message: string;
 };
+
 export type ShoppingCartResponse = {
   items: CartProduct[];
 

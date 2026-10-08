@@ -1,19 +1,23 @@
+"use client";
+
+import { memo } from "react";
+
 import {
   getInventoryStatus,
 } from "@/lib/inventory/status";
 
 type InventoryStatusBadgeProps = {
   quantity: number;
-  reservedQuantity?: number;
+  reservedQuantity: number;
   lowStockThreshold: number;
-  allowBackorder?: boolean;
+  allowBackorder: boolean;
 };
 
-export default function InventoryStatusBadge({
+function InventoryStatusBadge({
   quantity,
-  reservedQuantity = 0,
+  reservedQuantity,
   lowStockThreshold,
-  allowBackorder = false,
+  allowBackorder,
 }: InventoryStatusBadgeProps) {
 
   const status =
@@ -40,7 +44,7 @@ export default function InventoryStatusBadge({
         py-1
         text-xs
         font-semibold
-        ${status.color}
+        ${status.badgeClass}
       `}
     >
 
@@ -51,3 +55,7 @@ export default function InventoryStatusBadge({
   );
 
 }
+
+export default memo(
+  InventoryStatusBadge
+);

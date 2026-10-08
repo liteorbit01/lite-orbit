@@ -1,3 +1,7 @@
+"use client";
+
+import { memo } from "react";
+
 import Link from "next/link";
 
 import {
@@ -8,7 +12,7 @@ type ReorderSuggestionsProps = {
   suggestions: ReorderSuggestion[];
 };
 
-function PriorityBadge({
+const PriorityBadge = memo(function PriorityBadge({
   priority,
 }: {
   priority: ReorderSuggestion["priority"];
@@ -60,9 +64,139 @@ function PriorityBadge({
 
   );
 
-}
+});
 
-export default function ReorderSuggestions({
+const SuggestionRow = memo(function SuggestionRow({
+  item,
+}: {
+  item: ReorderSuggestion;
+}) {
+
+  return (
+
+    <div
+      className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between"
+    >
+
+      <div className="flex-1">
+
+        <div className="flex items-center gap-3">
+
+          <h3 className="text-lg font-semibold">
+
+            {item.productName}
+
+          </h3>
+
+          <PriorityBadge
+            priority={
+              item.priority
+            }
+          />
+
+        </div>
+
+        <div className="mt-2 text-sm text-gray-500">
+
+          SKU:
+
+          <span className="ml-2 font-medium">
+
+            {item.sku}
+
+          </span>
+
+        </div>
+
+        <p className="mt-3 text-sm text-gray-600">
+
+          {item.reason}
+
+        </p>
+
+      </div>
+
+      <div className="grid grid-cols-3 gap-8 text-center">
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Available
+
+          </div>
+
+          <div className="mt-2 text-xl font-bold">
+
+            {item.availableQuantity}
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Threshold
+
+          </div>
+
+          <div className="mt-2 text-xl font-bold">
+
+            {item.lowStockThreshold}
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div className="text-xs uppercase tracking-wide text-gray-400">
+
+            Order
+
+          </div>
+
+          <div className="mt-2 text-xl font-bold text-blue-600">
+
+            {item.reorderQuantity}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <Link
+        href={`/admin/inventory/${item.variantId}`}
+        className="
+          inline-flex
+          items-center
+          justify-center
+          rounded-lg
+          border
+          border-gray-300
+          px-5
+          py-2
+          text-sm
+          font-medium
+          transition
+          hover:bg-gray-100
+        "
+      >
+
+        Manage
+
+      </Link>
+
+    </div>
+
+  );
+
+});
+
+function ReorderSuggestions({
   suggestions,
 }: ReorderSuggestionsProps) {
 
@@ -124,130 +258,14 @@ export default function ReorderSuggestions({
 
         <div className="divide-y">
 
-          {suggestions.map(
-            (item) => (
+          {suggestions.map((item) => (
 
-              <div
-                key={item.id}
-                className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between"
-              >
+            <SuggestionRow
+              key={item.id}
+              item={item}
+            />
 
-                <div className="flex-1">
-
-                  <div className="flex items-center gap-3">
-
-                    <h3 className="font-semibold text-lg">
-
-                      {item.productName}
-
-                    </h3>
-
-                    <PriorityBadge
-                      priority={
-                        item.priority
-                      }
-                    />
-
-                  </div>
-
-                  <div className="mt-2 text-sm text-gray-500">
-
-                    SKU:
-
-                    <span className="ml-2 font-medium">
-
-                      {item.sku}
-
-                    </span>
-
-                  </div>
-
-                  <p className="mt-3 text-sm text-gray-600">
-
-                    {item.reason}
-
-                  </p>
-
-                </div>
-
-                <div className="grid grid-cols-3 gap-8 text-center">
-
-                  <div>
-
-                    <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                      Available
-
-                    </div>
-
-                    <div className="mt-2 text-xl font-bold">
-
-                      {item.availableQuantity}
-
-                    </div>
-
-                  </div>
-
-                  <div>
-
-                    <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                      Threshold
-
-                    </div>
-
-                    <div className="mt-2 text-xl font-bold">
-
-                      {item.lowStockThreshold}
-
-                    </div>
-
-                  </div>
-
-                  <div>
-
-                    <div className="text-xs uppercase tracking-wide text-gray-400">
-
-                      Order
-
-                    </div>
-
-                    <div className="mt-2 text-xl font-bold text-blue-600">
-
-                      {item.reorderQuantity}
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <Link
-                  href={`/admin/inventory/${item.variantId}`}
-                  className="
-                    inline-flex
-                    items-center
-                    justify-center
-                    rounded-lg
-                    border
-                    border-gray-300
-                    px-5
-                    py-2
-                    text-sm
-                    font-medium
-                    transition
-                    hover:bg-gray-100
-                  "
-                >
-
-                  Manage
-
-                </Link>
-
-              </div>
-
-            )
-          )}
+          ))}
 
         </div>
 
@@ -258,3 +276,7 @@ export default function ReorderSuggestions({
   );
 
 }
+
+export default memo(
+  ReorderSuggestions
+);

@@ -22,6 +22,35 @@ export type StoreProduct = {
   }[];
 };
 
+type StoreProductVariantQuery = {
+  id: string;
+  size: string;
+  price: number;
+  stock_quantity: number;
+  active: boolean;
+};
+
+type StoreProductImageQuery = {
+  image_url: string;
+  display_order: number;
+};
+
+type StoreProductQuery = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  featured: boolean;
+
+  product_images:
+    | StoreProductImageQuery[]
+    | null;
+
+  product_variants:
+    | StoreProductVariantQuery[]
+    | null;
+};
+
 // ======================================================
 // Store Product Queries
 // ======================================================
@@ -29,6 +58,7 @@ export type StoreProduct = {
 export async function getStoreProducts(): Promise<
   StoreProduct[]
 > {
+
   const supabase =
     await createClient();
 
@@ -59,21 +89,33 @@ export async function getStoreProducts(): Promise<
       )
     `)
     .eq("status", "published")
-    .order("created_at", {
-      ascending: false,
-    });
+    .order(
+      "created_at",
+      {
+        ascending: false,
+      }
+    );
 
   if (error) {
+
     throw error;
+
   }
 
   return (data ?? []).map(
-    (product: any) => ({
-      id: product.id,
 
-      name: product.name,
+    (
+      product: StoreProductQuery
+    ) => ({
 
-      slug: product.slug,
+      id:
+        product.id,
+
+      name:
+        product.name,
+
+      slug:
+        product.slug,
 
       description:
         product.description,
@@ -89,17 +131,29 @@ export async function getStoreProducts(): Promise<
       minPrice:
         product.product_variants?.length
           ? Math.min(
+
               ...product.product_variants.map(
-                (variant: any) =>
+
+                (
+                  variant:
+                    StoreProductVariantQuery
+                ) =>
+
                   variant.price
+
               )
+
             )
           : null,
 
       variants:
-        product.product_variants ?? [],
+        product.product_variants ??
+        [],
+
     })
+
   );
+
 }
 // ======================================================
 // Get Single Store Product
@@ -108,6 +162,7 @@ export async function getStoreProducts(): Promise<
 export async function getStoreProductBySlug(
   slug: string
 ): Promise<StoreProduct | null> {
+
   const supabase =
     await createClient();
 
@@ -137,47 +192,78 @@ export async function getStoreProductBySlug(
         active
       )
     `)
-    .eq("slug", slug)
-    .eq("status", "published")
+    .eq(
+      "slug",
+      slug
+    )
+    .eq(
+      "status",
+      "published"
+    )
     .single();
 
   if (error) {
-    if (error.code === "PGRST116") {
+
+    if (
+      error.code ===
+      "PGRST116"
+    ) {
+
       return null;
+
     }
 
     throw error;
+
   }
 
+  const product =
+    data as StoreProductQuery;
+
   return {
-    id: data.id,
 
-    name: data.name,
+    id:
+      product.id,
 
-    slug: data.slug,
+    name:
+      product.name,
+
+    slug:
+      product.slug,
 
     description:
-      data.description,
+      product.description,
 
     featured:
-      data.featured,
+      product.featured,
 
     image:
-      data.product_images?.[0]
+      product.product_images?.[0]
         ?.image_url ??
       "/hero.jpg",
 
     minPrice:
-      data.product_variants?.length
+      product.product_variants?.length
         ? Math.min(
-            ...data.product_variants.map(
-              (variant: any) =>
+
+            ...product.product_variants.map(
+
+              (
+                variant:
+                  StoreProductVariantQuery
+              ) =>
+
                 variant.price
+
             )
+
           )
         : null,
 
     variants:
-      data.product_variants ?? [],
+      product.product_variants ??
+      [],
+
   };
+
 }

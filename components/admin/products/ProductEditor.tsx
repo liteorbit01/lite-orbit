@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import AdminTabs from "@/components/ui/AdminTabs";
 
@@ -15,6 +15,7 @@ import type {
   CollectionOption,
   ProductImage,
   ProductVariant,
+  InventoryHistoryItem,
 } from "@/app/admin/products/types";
 
 type ProductEditorProps = {
@@ -23,8 +24,10 @@ type ProductEditorProps = {
   collections: CollectionOption[];
   images: ProductImage[];
   variants: ProductVariant[];
-  inventoryHistory: any[];
-  action: (formData: FormData) => void | Promise<void>;
+  inventoryHistory: InventoryHistoryItem[];
+  action: (
+    formData: FormData
+  ) => void | Promise<void>;
 };
 
 export default function ProductEditor({
@@ -36,31 +39,45 @@ export default function ProductEditor({
   inventoryHistory,
   action,
 }: ProductEditorProps) {
-  const [activeTab, setActiveTab] =
-    useState("general");
 
-  useEffect(() => {
-    const savedTab =
+  const [
+    activeTab,
+    setActiveTab,
+  ] = useState(() => {
+
+    if (
+      typeof window === "undefined"
+    ) {
+
+      return "general";
+
+    }
+
+    return (
       sessionStorage.getItem(
         "product-editor-tab"
-      );
+      ) ?? "general"
+    );
 
-    if (savedTab) {
-      setActiveTab(savedTab);
-    }
-  }, []);
+  });
 
-  function handleTabChange(tab: string) {
+  function handleTabChange(
+    tab: string
+  ) {
+
     sessionStorage.setItem(
       "product-editor-tab",
       tab
     );
 
     setActiveTab(tab);
+
   }
 
   return (
+
     <div className="space-y-6">
+
       <AdminTabs
         tabs={[
           {
@@ -89,45 +106,58 @@ export default function ProductEditor({
       />
 
       {activeTab === "general" && (
+
         <ProductForm
           initialData={product}
           categories={categories}
           collections={collections}
           action={action}
         />
+
       )}
 
       {activeTab === "images" && (
+
         <ProductImages
           productId={product.id!}
           images={images}
         />
+
       )}
 
       {activeTab === "variants" && (
+
         <ProductVariants
           productId={product.id!}
           variants={variants}
         />
+
       )}
 
       {activeTab === "inventory" && (
+
         <ProductInventory
           variants={variants}
           inventoryHistory={
             inventoryHistory
           }
         />
+
       )}
 
       {activeTab === "seo" && (
+
         <ComingSoon
           title="SEO"
           description="SEO settings will be implemented in a future sprint."
         />
+
       )}
+
     </div>
+
   );
+
 }
 
 type ComingSoonProps = {
@@ -139,21 +169,35 @@ function ComingSoon({
   title,
   description,
 }: ComingSoonProps) {
+
   return (
+
     <div className="rounded-2xl bg-white p-12 shadow-sm">
+
       <div className="text-center">
+
         <div className="text-5xl">
+
           🚧
+
         </div>
 
         <h2 className="mt-6 text-2xl font-semibold">
+
           {title}
+
         </h2>
 
         <p className="mt-3 text-gray-500">
+
           {description}
+
         </p>
+
       </div>
+
     </div>
+
   );
+
 }

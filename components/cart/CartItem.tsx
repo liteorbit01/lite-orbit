@@ -19,34 +19,48 @@ type CartItemProps = {
 export default function CartItem({
   item,
 }: CartItemProps) {
-  const router = useRouter();
 
-  const [isPending, startTransition] =
-    useTransition();
+  const router =
+    useRouter();
+
+  const [
+    isPending,
+    startTransition,
+  ] = useTransition();
 
   function refreshAfter(
-    action: () => Promise<any>
+    action: () => Promise<void>
   ) {
+
     startTransition(async () => {
+
       await action();
 
       router.refresh();
+
     });
+
   }
 
   function handleIncrease() {
+
     refreshAfter(() =>
       updateCartQuantity(
         item.cart_item_id,
         item.quantity + 1
       )
     );
+
   }
 
   function handleDecrease() {
+
     if (item.quantity === 1) {
+
       handleRemove();
+
       return;
+
     }
 
     refreshAfter(() =>
@@ -55,40 +69,53 @@ export default function CartItem({
         item.quantity - 1
       )
     );
+
   }
 
   function handleRemove() {
+
     refreshAfter(() =>
       removeItemFromCart(
         item.cart_item_id
       )
     );
+
   }
 
   return (
-    <div className="flex justify-between items-center mb-8 border-b pb-6">
+
+    <div className="flex items-center justify-between mb-8 border-b pb-6">
 
       <div>
+
         <p className="text-lg">
+
           {item.product_name}
+
         </p>
 
-        <p className="text-sm text-[#6B6B6B]">
+        <p className="mt-1 text-sm text-[#6B6B6B]">
+
           {item.size}
+
         </p>
 
-        <div className="flex items-center gap-4 mt-4">
+        <div className="mt-4 flex items-center gap-4">
 
           <button
             onClick={handleDecrease}
             disabled={isPending}
             className="border w-8 h-8 rounded hover:bg-gray-100 disabled:opacity-50"
           >
+
             −
+
           </button>
 
           <span className="min-w-[20px] text-center">
+
             {item.quantity}
+
           </span>
 
           <button
@@ -96,16 +123,21 @@ export default function CartItem({
             disabled={isPending}
             className="border w-8 h-8 rounded hover:bg-gray-100 disabled:opacity-50"
           >
+
             +
+
           </button>
 
         </div>
+
       </div>
 
       <div className="text-right">
 
-        <p className="text-lg mb-4">
+        <p className="mb-4 text-lg">
+
           ${item.subtotal.toFixed(2)} CAD
+
         </p>
 
         <button
@@ -113,13 +145,17 @@ export default function CartItem({
           disabled={isPending}
           className="text-red-600 hover:underline disabled:opacity-50"
         >
+
           {isPending
             ? "Updating..."
             : "Remove"}
+
         </button>
 
       </div>
 
     </div>
+
   );
+
 }
