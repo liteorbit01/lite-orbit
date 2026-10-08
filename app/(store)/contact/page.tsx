@@ -38,9 +38,13 @@ export default function Contact() {
       }
 
       setSuccess("Message sent successfully.");
-      setForm({ name: "", email: "", message: "" });
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
 
-    } catch (err) {
+    } catch {
       setError("Server error.");
     }
   };
@@ -50,22 +54,25 @@ export default function Contact() {
 
       {/* Intro Section */}
       <section className="px-6 pt-20 pb-24">
-        <div className="max-w-2xl mx-auto text-center">
 
-          <h1 className="text-4xl md:text-5xl font-light tracking-[0.08em] mb-6">
+        <div className="mx-auto max-w-2xl text-center">
+
+          <h1 className="mb-6 text-4xl font-light tracking-[0.08em] md:text-5xl">
             Contact
           </h1>
 
-          <p className="text-[#6B6B6B] leading-relaxed">
+          <p className="leading-relaxed text-[#6B6B6B]">
             We would love to hear from you.
           </p>
 
         </div>
+
       </section>
 
       {/* Form Section */}
       <section className="px-6 pb-32">
-        <div className="max-w-2xl mx-auto">
+
+        <div className="mx-auto max-w-2xl">
 
           <div className="space-y-6">
 
@@ -74,9 +81,12 @@ export default function Contact() {
               placeholder="Full Name"
               value={form.name}
               onChange={(e) =>
-                setForm({ ...form, name: e.target.value })
+                setForm({
+                  ...form,
+                  name: e.target.value,
+                })
               }
-              className="w-full px-6 py-3 border border-[#2F2F2F] bg-transparent focus:outline-none focus:border-black transition-colors"
+              className="w-full border border-[#2F2F2F] bg-transparent px-6 py-3 transition-colors focus:border-black focus:outline-none"
             />
 
             <input
@@ -84,9 +94,12 @@ export default function Contact() {
               placeholder="Email Address"
               value={form.email}
               onChange={(e) =>
-                setForm({ ...form, email: e.target.value })
+                setForm({
+                  ...form,
+                  email: e.target.value,
+                })
               }
-              className="w-full px-6 py-3 border border-[#2F2F2F] bg-transparent focus:outline-none focus:border-black transition-colors"
+              className="w-full border border-[#2F2F2F] bg-transparent px-6 py-3 transition-colors focus:border-black focus:outline-none"
             />
 
             <textarea
@@ -94,29 +107,37 @@ export default function Contact() {
               rows={5}
               value={form.message}
               onChange={(e) =>
-                setForm({ ...form, message: e.target.value })
+                setForm({
+                  ...form,
+                  message: e.target.value,
+                })
               }
-              className="w-full px-6 py-3 border border-[#2F2F2F] bg-transparent focus:outline-none focus:border-black transition-colors"
+              className="w-full border border-[#2F2F2F] bg-transparent px-6 py-3 transition-colors focus:border-black focus:outline-none"
             />
 
             <button
               onClick={handleSubmit}
-              className="mt-4 px-8 py-3 border border-[#2F2F2F] hover:bg-[#2F2F2F] hover:text-white transition-all duration-300"
+              className="mt-4 border border-[#2F2F2F] px-8 py-3 transition-all duration-300 hover:bg-[#2F2F2F] hover:text-white"
             >
               Send Message
             </button>
 
             {success && (
-              <p className="text-green-600 text-sm mt-4">{success}</p>
+              <p className="mt-4 text-sm text-green-600">
+                {success}
+              </p>
             )}
 
             {error && (
-              <p className="text-red-600 text-sm mt-4">{error}</p>
+              <p className="mt-4 text-sm text-red-600">
+                {error}
+              </p>
             )}
 
           </div>
 
         </div>
+
       </section>
 
     </main>

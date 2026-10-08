@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import CartBadge from "@/components/cart/CartBadge";
 
@@ -15,76 +16,89 @@ export default function HeaderClient({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "auto";
+    document.body.style.overflow = open
+      ? "hidden"
+      : "auto";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [open]);
 
   return (
     <header className="relative z-50 border-b border-[#E5E0D8]">
 
       {/* Top Bar */}
-      <div className="px-6 md:px-10 py-6 md:py-8 max-w-7xl mx-auto w-full flex items-center justify-between">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-10 md:py-8">
 
         {/* Logo */}
         <Link
           href="/"
           className="flex items-center space-x-3"
         >
-          <img
+          <Image
             src="/logo.png"
             alt="Lite Orbit Logo"
-            className="h-8 md:h-14 w-auto"
+            width={224}
+            height={56}
+            priority
+            className="h-8 w-auto md:h-14"
           />
 
           <div className="leading-tight">
+
             <span
-              className="block text-base md:text-3xl italic"
+              className="block text-base italic md:text-3xl"
               style={{
-                fontFamily: "'Playfair Display', serif",
+                fontFamily:
+                  "'Playfair Display', serif",
               }}
             >
               Lite Orbit
             </span>
 
-            <span className="block text-xs md:text-lg tracking-wide text-[#6B6B6B]">
+            <span className="block text-xs tracking-wide text-[#6B6B6B] md:text-lg">
               Essentials, Reconsidered.
             </span>
+
           </div>
+
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-10 text-sm text-[#6B6B6B]">
+        <nav className="hidden items-center space-x-10 text-sm text-[#6B6B6B] md:flex">
 
           <Link
             href="/"
-            className="hover:text-black transition"
+            className="transition hover:text-black"
           >
             Home
           </Link>
 
           <Link
             href="/about"
-            className="hover:text-black transition"
+            className="transition hover:text-black"
           >
             About
           </Link>
 
           <Link
             href="/collection"
-            className="hover:text-black transition"
+            className="transition hover:text-black"
           >
             Collection
           </Link>
 
           <Link
             href="/shop"
-            className="hover:text-black transition"
+            className="transition hover:text-black"
           >
             Shop
           </Link>
 
           <Link
             href="/contact"
-            className="hover:text-black transition"
+            className="transition hover:text-black"
           >
             Contact
           </Link>
@@ -96,15 +110,22 @@ export default function HeaderClient({
         {/* Mobile Hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-3xl z-50"
+          className="z-50 text-3xl md:hidden"
+          aria-label={
+            open
+              ? "Close menu"
+              : "Open menu"
+          }
         >
           {open ? "✕" : "☰"}
         </button>
+
       </div>
 
       {/* Mobile Fullscreen Menu */}
       {open && (
-        <div className="fixed inset-0 bg-[#F5F1EB]/95 backdrop-blur-md flex flex-col items-center justify-center space-y-10 text-2xl text-[#2F2F2F] tracking-wide md:hidden">
+
+        <div className="fixed inset-0 flex flex-col items-center justify-center space-y-10 bg-[#F5F1EB]/95 text-2xl tracking-wide text-[#2F2F2F] backdrop-blur-md md:hidden">
 
           <Link
             href="/"
@@ -146,11 +167,14 @@ export default function HeaderClient({
             onClick={() => setOpen(false)}
           >
             Cart
-            {itemCount > 0 && ` (${itemCount})`}
+            {itemCount > 0 &&
+              ` (${itemCount})`}
           </Link>
 
         </div>
+
       )}
+
     </header>
   );
 }
