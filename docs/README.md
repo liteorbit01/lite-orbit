@@ -1,9 +1,9 @@
 # Lite Orbit Documentation
 
-**Document Version:** 1.0  
+**Document Version:** 2.0  
 **Status:** Active  
-**Last Updated:** 2026-08-23  
-**Project Version:** v0.3 – Admin CMS Foundation
+**Last Updated:** 2026-10-12  
+**Project Version:** v1.0 – Commerce Platform Foundation
 
 ---
 
@@ -11,31 +11,59 @@
 
 Welcome to the official Lite Orbit documentation.
 
-This documentation is the single source of truth for the Lite Orbit platform. It describes the architecture, business rules, engineering standards, database design, deployment process, and long-term vision of the project.
+This documentation is the single source of truth for the Lite Orbit platform. It describes the platform architecture, engineering standards, business rules, database design, deployment strategy, security model, and long-term product vision.
 
-Whether you are the founder, a future developer, or a technical reviewer, this documentation should provide everything needed to understand how Lite Orbit is designed and maintained.
+Whether you are the founder, a future developer, or a technical reviewer, this documentation provides everything needed to understand how Lite Orbit is designed, developed, deployed, and maintained.
 
 ---
 
 # About Lite Orbit
 
-Lite Orbit is a premium e-commerce platform specializing in refined apparel and home textiles.
+Lite Orbit is a premium commerce platform specializing in refined apparel and home textiles.
 
-The platform is designed around four principles:
+The platform is designed around four guiding principles:
 
 - Elegant customer experience
 - Secure and scalable architecture
 - Long-term maintainability
 - Production-quality engineering
 
-Lite Orbit is built using modern web technologies including:
+Lite Orbit is built using modern technologies including:
 
-- Next.js
+- Next.js (App Router)
+- React
 - TypeScript
 - Tailwind CSS
 - Supabase
 - PostgreSQL
+- Stripe
 - Vercel
+
+---
+
+# Platform Status
+
+Lite Orbit has completed its foundational platform architecture.
+
+The platform currently includes:
+
+- Modern Next.js application architecture
+- PostgreSQL database
+- Supabase Authentication
+- Row Level Security (RLS)
+- Supabase Storage
+- Administrator CMS
+- Product Management
+- Categories & Collections
+- Inventory Management
+- Shopping Cart
+- Checkout
+- Stripe Checkout Integration
+- Order Management
+- Identity & Access Management (IAM) architecture
+- Comprehensive engineering documentation
+
+Future development focuses on expanding platform capabilities rather than establishing foundational infrastructure.
 
 ---
 
@@ -45,15 +73,18 @@ Lite Orbit is built using modern web technologies including:
 
 | Document | Purpose |
 |----------|---------|
-| ARCHITECTURE.md | Overall system architecture |
-| APPLICATION.md | Application design and workflows |
-| DATABASE.md | Database schema and migrations |
-| AUTHORIZATION.md | Authentication, authorization and security |
+| README.md | Documentation entry point |
+| PROJECT_CONSTITUTION.md | Core project principles and vision |
+| ARCHITECTURE.md | Overall platform architecture |
+| APPLICATION.md | Application structure and workflows |
+| DATABASE.md | Database schema and architecture |
 | STORAGE.md | Supabase Storage architecture |
-| ENGINEERING_PRINCIPLES.md | Development standards and engineering philosophy |
-| ROADMAP.md | Development roadmap |
+| AUTHORIZATION.md | Row Level Security (RLS) and database authorization |
+| IDENTITY_AND_ACCESS_MANAGEMENT.md | Authentication, authorization, roles and permissions |
+| ENGINEERING_PRINCIPLES.md | Engineering standards and development philosophy |
+| ROADMAP.md | Product roadmap |
+| DECISIONS.md | Architectural decisions |
 | CHANGELOG.md | Project history |
-| DECISIONS.md | Important architectural decisions |
 | FOUNDER_GUIDE.md | Business vision and long-term strategy |
 
 ---
@@ -62,14 +93,31 @@ Lite Orbit is built using modern web technologies including:
 
 Additional documentation is organized into specialized folders.
 
+## ADR
+
+Architecture Decision Records documenting important technical decisions.
+
+Contents include:
+
+- Next.js architecture
+- Supabase architecture
+- Service Role security
+- Folder organization
+- Admin architecture
+- Product model
+
+---
+
 ## API
 
-Contains documentation for:
+API specifications and endpoint documentation.
+
+Includes:
 
 - Authentication
 - Products
-- Orders
 - Customers
+- Orders
 - Inventory
 - Webhooks
 
@@ -77,24 +125,28 @@ Contains documentation for:
 
 ## Database
 
-Contains detailed information about:
+Detailed database implementation.
+
+Includes:
 
 - Schema
 - Migrations
-- Triggers
-- Helper Functions
 - Indexes
+- Triggers
+- Helper functions
 - Row Level Security
 
 ---
 
 ## Deployment
 
-Contains deployment procedures for:
+Deployment procedures and infrastructure.
+
+Includes:
 
 - Vercel
 - Supabase
-- Environment Variables
+- Environment variables
 - Domains
 - Backups
 
@@ -102,7 +154,9 @@ Contains deployment procedures for:
 
 ## Development
 
-Contains engineering practices including:
+Engineering practices and workflows.
+
+Includes:
 
 - Coding standards
 - Folder organization
@@ -115,11 +169,13 @@ Contains engineering practices including:
 
 ## UI
 
-Contains design system documentation including:
+User interface standards.
 
+Includes:
+
+- Components
 - Colors
 - Typography
-- Components
 - Responsive design
 - Accessibility
 
@@ -127,55 +183,111 @@ Contains design system documentation including:
 
 ## Business
 
-Contains business-specific documentation including:
+Business process documentation.
+
+Includes:
 
 - Products
+- Pricing
 - Inventory
 - Fulfillment
-- Pricing
 - Shipping
 - Customer Journey
 
 ---
 
-## ADR
+## Reference
 
-Architecture Decision Records document important technical decisions made throughout the lifetime of the project.
+Reference material supporting development.
+
+Includes:
+
+- Project tree
+- UI wireframes
+- Screenshots
+- Meeting notes
+- Previous designs
 
 ---
 
 # Current Project Status
 
-Current Version
+## Current Version
 
-v0.3 – Admin CMS Foundation
+**v1.0 – Commerce Platform Foundation**
 
-Current Sprint
+---
 
-Sprint 4
+## Current Sprint
 
-Current Focus
+**Identity & Access Management Implementation**
 
-Building the Product Management module for the Admin CMS.
+---
 
-Completed Milestones
+## Current Focus
+
+Implementing centralized role-based authorization using the Identity & Access Management architecture.
+
+---
+
+## Completed Milestones
 
 - Database architecture
-- Security model
-- Authentication
-- Storage architecture
-- Public storefront foundation
-- Admin authentication
-- Admin dashboard foundation
-
-Upcoming Milestones
-
+- Row Level Security (RLS)
+- Supabase Storage
+- Supabase Authentication
+- Administrator authentication
+- Administrator dashboard
 - Product Management
+- Categories & Collections
 - Inventory Management
-- Dynamic Storefront
+- Shopping Cart
 - Checkout
-- Orders
-- Customer Portal
+- Stripe Checkout integration
+- Order Management
+- Identity & Access Management architecture
+- Engineering documentation
+
+---
+
+## Upcoming Milestones
+
+- Role-based authorization
+- Customer authentication
+- Customer portal
+- Reports
+- Analytics
+- Marketing tools
+- Production hardening
+- Public launch
+
+---
+
+# Engineering Workflow
+
+Lite Orbit follows an architecture-first development process.
+
+```
+Architecture
+
+↓
+
+Review
+
+↓
+
+Implementation
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+Major platform features should follow this workflow before implementation.
 
 ---
 
@@ -183,9 +295,9 @@ Upcoming Milestones
 
 Lite Orbit is developed according to the Engineering Principles documented in:
 
-ENGINEERING_PRINCIPLES.md
+**ENGINEERING_PRINCIPLES.md**
 
-Every architectural decision should follow these principles before implementation.
+Every architectural and implementation decision should align with these principles.
 
 ---
 
@@ -194,12 +306,29 @@ Every architectural decision should follow these principles before implementatio
 Every completed feature should include:
 
 - Working implementation
-- Testing
-- Documentation update
+- Appropriate testing
+- Documentation updates
 - Git commit
 - Deployment validation
 
-Documentation should always evolve together with the application.
+Documentation evolves together with the application and should remain synchronized with implementation.
+
+---
+
+# Related Documentation
+
+The recommended reading order for new contributors is:
+
+1. README.md
+2. PROJECT_CONSTITUTION.md
+3. ARCHITECTURE.md
+4. APPLICATION.md
+5. DATABASE.md
+6. STORAGE.md
+7. AUTHORIZATION.md
+8. IDENTITY_AND_ACCESS_MANAGEMENT.md
+9. ENGINEERING_PRINCIPLES.md
+10. ROADMAP.md
 
 ---
 
