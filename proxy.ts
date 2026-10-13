@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
   });
@@ -32,20 +32,20 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // IMPORTANT:
-  // Refresh the user's session.
+  // Refresh the user's authentication session.
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
 
-  // Public admin login page
+  // Allow access to the admin login page.
   if (path === "/admin/login") {
     return response;
   }
 
-  // Protect all other admin pages
+  // Redirect unauthenticated users trying to access
+  // protected admin routes.
   if (path.startsWith("/admin") && !user) {
     return NextResponse.redirect(
       new URL("/admin/login", request.url)
