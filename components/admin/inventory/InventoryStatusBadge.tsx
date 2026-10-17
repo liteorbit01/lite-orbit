@@ -44,7 +44,7 @@ function InventoryStatusBadge({
         py-1
         text-xs
         font-semibold
-        ${status.badgeClass}
+        ${status.color}
       `}
     >
 

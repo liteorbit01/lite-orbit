@@ -6,7 +6,7 @@ import VariantForm from "./VariantForm";
 
 import type {
   ProductVariant,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type ProductVariantsProps = {
   productId: string;

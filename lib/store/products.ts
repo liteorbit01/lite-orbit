@@ -1,3 +1,4 @@
+
 import { createClient } from "../supabase/server";
 
 // ======================================================
@@ -22,9 +23,13 @@ export type StoreProduct = {
   }[];
 };
 
+// ======================================================
+// Supabase Query Types
+// ======================================================
+
 type StoreProductVariantQuery = {
   id: string;
-  size: string;
+  size: string | null;
   price: number;
   stock_quantity: number;
   active: boolean;
@@ -39,7 +44,7 @@ type StoreProductQuery = {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   featured: boolean;
 
   product_images:
@@ -58,14 +63,9 @@ type StoreProductQuery = {
 export async function getStoreProducts(): Promise<
   StoreProduct[]
 > {
+  const supabase = await createClient();
 
-  const supabase =
-    await createClient();
-
-  const {
-    data,
-    error,
-  } = await supabase
+  const { data, error } = await supabase
     .from("products")
     .select(`
       id,
@@ -89,72 +89,49 @@ export async function getStoreProducts(): Promise<
       )
     `)
     .eq("status", "published")
-    .order(
-      "created_at",
-      {
-        ascending: false,
-      }
-    );
+    .order("created_at", {
+      ascending: false,
+    });
 
   if (error) {
-
     throw error;
-
   }
 
   return (data ?? []).map(
+    (product: StoreProductQuery) => ({
+      id: product.id,
 
-    (
-      product: StoreProductQuery
-    ) => ({
+      name: product.name,
 
-      id:
-        product.id,
+      slug: product.slug,
 
-      name:
-        product.name,
+      description: product.description ?? "",
 
-      slug:
-        product.slug,
-
-      description:
-        product.description,
-
-      featured:
-        product.featured,
+      featured: product.featured,
 
       image:
-        product.product_images?.[0]
-          ?.image_url ??
+        product.product_images?.[0]?.image_url ??
         "/hero.jpg",
 
-      minPrice:
-        product.product_variants?.length
-          ? Math.min(
-
-              ...product.product_variants.map(
-
-                (
-                  variant:
-                    StoreProductVariantQuery
-                ) =>
-
-                  variant.price
-
-              )
-
+      minPrice: product.product_variants?.length
+        ? Math.min(
+            ...product.product_variants.map(
+              (variant: StoreProductVariantQuery) =>
+                variant.price
             )
-          : null,
+          )
+        : null,
 
-      variants:
-        product.product_variants ??
-        [],
-
+      variants: (product.product_variants ?? []).map(
+        (variant) => ({
+          ...variant,
+          size: variant.size ?? "",
+        })
+      ),
     })
-
   );
-
 }
+
 // ======================================================
 // Get Single Store Product
 // ======================================================
@@ -162,14 +139,9 @@ export async function getStoreProducts(): Promise<
 export async function getStoreProductBySlug(
   slug: string
 ): Promise<StoreProduct | null> {
+  const supabase = await createClient();
 
-  const supabase =
-    await createClient();
-
-  const {
-    data,
-    error,
-  } = await supabase
+  const { data, error } = await supabase
     .from("products")
     .select(`
       id,
@@ -192,78 +164,49 @@ export async function getStoreProductBySlug(
         active
       )
     `)
-    .eq(
-      "slug",
-      slug
-    )
-    .eq(
-      "status",
-      "published"
-    )
+    .eq("slug", slug)
+    .eq("status", "published")
     .single();
 
   if (error) {
-
-    if (
-      error.code ===
-      "PGRST116"
-    ) {
-
+    if (error.code === "PGRST116") {
       return null;
-
     }
 
     throw error;
-
   }
 
-  const product =
-    data as StoreProductQuery;
+  const product: StoreProductQuery = data;
 
   return {
+    id: product.id,
 
-    id:
-      product.id,
+    name: product.name,
 
-    name:
-      product.name,
+    slug: product.slug,
 
-    slug:
-      product.slug,
+    description: product.description ?? "",
 
-    description:
-      product.description,
-
-    featured:
-      product.featured,
+    featured: product.featured,
 
     image:
-      product.product_images?.[0]
-        ?.image_url ??
+      product.product_images?.[0]?.image_url ??
       "/hero.jpg",
 
-    minPrice:
-      product.product_variants?.length
-        ? Math.min(
-
-            ...product.product_variants.map(
-
-              (
-                variant:
-                  StoreProductVariantQuery
-              ) =>
-
-                variant.price
-
-            )
-
+    minPrice: product.product_variants?.length
+      ? Math.min(
+          ...product.product_variants.map(
+            (variant: StoreProductVariantQuery) =>
+              variant.price
           )
-        : null,
+        )
+      : null,
 
-    variants:
-      product.product_variants ??
-      [],
-
+    variants: (product.product_variants ?? []).map(
+      (variant) => ({
+        ...variant,
+        size: variant.size ?? "",
+      })
+    ),
   };
-
 }

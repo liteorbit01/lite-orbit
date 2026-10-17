@@ -9,7 +9,7 @@ import {
 
 import type {
   ProductImage,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type ProductImagesProps = {
   productId: string;

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useTransition } from "react";
@@ -8,9 +9,7 @@ import {
   updateCartQuantity,
 } from "@/app/cart/actions";
 
-import type {
-  CartProduct,
-} from "@/app/cart/types";
+import type { CartProduct } from "@/app/cart/types";
 
 type CartItemProps = {
   item: CartProduct;
@@ -19,48 +18,34 @@ type CartItemProps = {
 export default function CartItem({
   item,
 }: CartItemProps) {
+  const router = useRouter();
 
-  const router =
-    useRouter();
-
-  const [
-    isPending,
-    startTransition,
-  ] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   function refreshAfter(
-    action: () => Promise<void>
+    action: () => Promise<
+      Awaited<ReturnType<typeof updateCartQuantity>>
+    >
   ) {
-
     startTransition(async () => {
-
       await action();
-
       router.refresh();
-
     });
-
   }
 
   function handleIncrease() {
-
     refreshAfter(() =>
       updateCartQuantity(
         item.cart_item_id,
         item.quantity + 1
       )
     );
-
   }
 
   function handleDecrease() {
-
     if (item.quantity === 1) {
-
       handleRemove();
-
       return;
-
     }
 
     refreshAfter(() =>
@@ -69,93 +54,66 @@ export default function CartItem({
         item.quantity - 1
       )
     );
-
   }
 
   function handleRemove() {
-
     refreshAfter(() =>
-      removeItemFromCart(
-        item.cart_item_id
-      )
+      removeItemFromCart(item.cart_item_id)
     );
-
   }
 
   return (
-
     <div className="flex items-center justify-between mb-8 border-b pb-6">
-
       <div>
-
         <p className="text-lg">
-
           {item.product_name}
-
         </p>
 
         <p className="mt-1 text-sm text-[#6B6B6B]">
-
           {item.size}
-
         </p>
 
         <div className="mt-4 flex items-center gap-4">
-
           <button
+            type="button"
             onClick={handleDecrease}
             disabled={isPending}
             className="border w-8 h-8 rounded hover:bg-gray-100 disabled:opacity-50"
+            aria-label={`Decrease quantity of ${item.product_name}`}
           >
-
             −
-
           </button>
 
           <span className="min-w-[20px] text-center">
-
             {item.quantity}
-
           </span>
 
           <button
+            type="button"
             onClick={handleIncrease}
             disabled={isPending}
             className="border w-8 h-8 rounded hover:bg-gray-100 disabled:opacity-50"
+            aria-label={`Increase quantity of ${item.product_name}`}
           >
-
             +
-
           </button>
-
         </div>
-
       </div>
 
       <div className="text-right">
-
         <p className="mb-4 text-lg">
-
           ${item.subtotal.toFixed(2)} CAD
-
         </p>
 
         <button
+          type="button"
           onClick={handleRemove}
           disabled={isPending}
           className="text-red-600 hover:underline disabled:opacity-50"
         >
-
-          {isPending
-            ? "Updating..."
-            : "Remove"}
-
+          {isPending ? "Updating..." : "Remove"}
         </button>
-
       </div>
-
     </div>
-
   );
-
 }

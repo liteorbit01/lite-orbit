@@ -53,7 +53,7 @@ export async function decreaseInventory(
 
     newQuantity,
 
-    "decrease",
+    "sale",
 
     "Customer purchase"
 

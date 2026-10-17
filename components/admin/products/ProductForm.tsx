@@ -6,7 +6,7 @@ import type {
   ProductFormData,
   CategoryOption,
   CollectionOption,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type ProductFormProps = {
   categories: CategoryOption[];

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ProductListItem } from "@/app/admin/products/types";
+import type { ProductListItem } from "@/types/admin-products";
 
 type ProductTableProps = {
   products: ProductListItem[];

@@ -1,7 +1,7 @@
 import { formatDateTime } from "@/lib/utils/date";
 import type {
   InventoryHistoryItem,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type InventoryHistoryProps = {
   history: InventoryHistoryItem[];

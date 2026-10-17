@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProductFormData } from "@/app/admin/products/types";
+import type { ProductFormData } from "@/types/admin-products";
 
 type Props = {
   product: ProductFormData;
@@ -79,9 +79,9 @@ export default function ProductBasicInfo({
 
         <select
           className="w-full rounded-lg border p-3"
-          value={product.category}
+          value={product.categoryId}
           onChange={(e) =>
-            update("category", e.target.value)
+            update("categoryId", e.target.value)
           }
         >
           <option value="">Select a category</option>

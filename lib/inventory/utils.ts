@@ -363,6 +363,6 @@ export function getInventoryBadgeClass(
 
     allowBackorder
 
-  ).status.badgeClass;
+  ).status.color;
 
 }

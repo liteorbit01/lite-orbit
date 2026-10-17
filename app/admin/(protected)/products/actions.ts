@@ -4,13 +4,45 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 import type {
   ProductFormData,
   ProductListItem,
   CategoryOption,
   CollectionOption,
+  ProductImage,
+  ProductVariant,
+  InventoryHistoryItem,
 } from "./types";
+import type { Database } from "@/types/database.types";
+
+
+type ProductStatus =
+  Database["public"]["Enums"]["product_status"];
+
+const VALID_PRODUCT_STATUSES: ProductStatus[] = [
+  "draft",
+  "review",
+  "published",
+  "archived",
+];
+
+function parseProductStatus(
+  value: FormDataEntryValue | null
+): ProductStatus {
+  const status = String(value ?? "").trim();
+
+  if (
+    VALID_PRODUCT_STATUSES.some(
+      (allowed) => allowed === status
+    )
+  ) {
+    return status as ProductStatus;
+  }
+
+  throw new Error("Invalid product status.");
+}
+
 
 /* =======================================
    Product Query Result
@@ -21,11 +53,11 @@ type ProductQueryResult = {
 
   name: string;
 
-  product_code: string;
+  product_code: string | null;
 
   slug: string;
 
-  status: string;
+  status: Database["public"]["Enums"]["product_status"];
 
   featured: boolean;
 
@@ -100,7 +132,7 @@ export async function getProducts(): Promise<ProductListItem[]> {
         product.name,
 
       productCode:
-        product.product_code,
+        product.product_code ?? "",
 
       slug:
         product.slug,
@@ -180,7 +212,7 @@ export async function getProductById(
       data.name,
 
     productCode:
-      data.product_code,
+      data.product_code ?? "",
 
     slug:
       data.slug,
@@ -193,7 +225,7 @@ export async function getProductById(
       data.category_id,
 
     collectionId:
-      data.collection_id,
+      data.collection_id ?? "",
 
     status:
       data.status,
@@ -321,10 +353,8 @@ export async function createProduct(
         .toString()
         .trim(),
 
-    status:
-      (formData.get("status") ?? "draft")
-        .toString()
-        .trim(),
+    status: parseProductStatus
+    (formData.get("status")),
 
     description:
       (formData.get("description") ?? "")
@@ -506,9 +536,8 @@ export async function updateProduct(
         .trim(),
 
     status:
-      (formData.get("status") ?? "draft")
-        .toString()
-        .trim(),
+      parseProductStatus
+      (formData.get("status")),
 
     description:
       (formData.get("description") ?? "")
@@ -632,4 +661,113 @@ export async function updateProduct(
     "/admin/products"
   );
 
+}
+
+/* =======================================
+   Get Product Images
+======================================= */
+
+export async function getProductImages(
+  productId: string
+): Promise<ProductImage[]> {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("product_images")
+    .select("*")
+    .eq("product_id", productId)
+    .order("display_order", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(
+      "Error loading product images:",
+      error.message
+    );
+    throw new Error("Unable to load product images.");
+  }
+
+  return data ?? [];
+}
+
+/* =======================================
+   Get Product Variants
+======================================= */
+
+export async function getProductVariants(
+  productId: string
+): Promise<ProductVariant[]> {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("product_variants")
+    .select("*")
+    .eq("product_id", productId)
+    .order("created_at", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(
+      "Error loading product variants:",
+      error.message
+    );
+    throw new Error("Unable to load product variants.");
+  }
+
+  return data ?? [];
+}
+
+/* =======================================
+   Get Product Inventory History
+======================================= */
+
+export async function getInventoryHistory(
+  productId: string
+): Promise<InventoryHistoryItem[]> {
+  await requireAdmin();
+
+  const { data, error } = await supabaseAdmin
+    .from("inventory_history")
+    .select(`
+      id,
+      variant_id,
+      quantity_change,
+      stock_after,
+      action,
+      notes,
+      created_at,
+      product_variants!inner (
+        sku,
+        size,
+        product_id
+      )
+    `)
+    .eq("product_variants.product_id", productId)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    console.error(
+      "Error loading inventory history:",
+      error.message
+    );
+    throw new Error("Unable to load inventory history.");
+  }
+
+  return (data ?? []).map((item) => ({
+    id: item.id,
+    variant_id: item.variant_id,
+    quantity_change: item.quantity_change,
+    stock_after: item.stock_after,
+    action: item.action,
+    notes: item.notes,
+    created_at: item.created_at,
+    product_variants: {
+      sku: item.product_variants.sku,
+      size: item.product_variants.size,
+    },
+  }));
 }

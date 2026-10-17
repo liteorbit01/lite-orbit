@@ -1,6 +1,7 @@
+import type { Database } from "@/types/database.types";
+
 export type ProductStatus =
-  | "draft"
-  | "published";
+  Database["public"]["Enums"]["product_status"];
 
 export type ProductSize = {
   size: string;

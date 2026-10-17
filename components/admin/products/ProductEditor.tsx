@@ -16,7 +16,7 @@ import type {
   ProductImage,
   ProductVariant,
   InventoryHistoryItem,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type ProductEditorProps = {
   product: ProductFormData;

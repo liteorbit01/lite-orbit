@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type {
   ProductVariant,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type VariantFormProps = {
   productId: string;

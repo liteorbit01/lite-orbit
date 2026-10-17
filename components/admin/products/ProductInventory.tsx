@@ -9,7 +9,7 @@ import InventoryAdjustmentModal from "./InventoryAdjustmentModal";
 import type {
   ProductVariant,
   InventoryHistoryItem,
-} from "@/app/admin/products/types";
+} from "@/types/admin-products";
 
 type ProductInventoryProps = {
   variants: ProductVariant[];

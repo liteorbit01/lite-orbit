@@ -1,11 +1,8 @@
+
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function getInventoryDashboard() {
-
-  const {
-    data,
-    error,
-  } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("inventory")
     .select(`
       id,
@@ -18,6 +15,7 @@ export async function getInventoryDashboard() {
         id,
         sku,
         products (
+          id,
           name
         )
       )
@@ -29,5 +27,4 @@ export async function getInventoryDashboard() {
   }
 
   return data ?? [];
-
 }
